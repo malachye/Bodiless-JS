@@ -20,6 +20,7 @@ describe('Re-rendering crash', function () {
    })
 
    const pagePath = '/touts/';
+   const longText = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum in corrupti temporibus perferendis, unde quia deleniti repellat delectus, sit architecto a facere, ratione impedit dolore minus nemo aperiam mollitia maxime facilis magni modi. Odit rerum, eaque veritatis, placeat est nobis similique perspiciatis natus explicabo et, magni maiores reiciendis delectus odio. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum in corrupti temporibus perferendis, unde quia deleniti repellat delectus, sit architecto a facere, ratione impedit dolore minus nemo aperiam mollitia maxime facilis magni modi. Odit rerum, eaque veritatis, placeat est nobis similique perspiciatis natus explicabo et, magni maiores reiciendis delectus odio. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum in corrupti temporibus perferendis, unde quia deleniti repellat delectus, sit architecto a facere, ratione impedit dolore minus nemo aperiam mollitia maxime facilis magni modi. Odit rerum, eaque veritatis, placeat est nobis similique perspiciatis natus explicabo et, magni maiores reiciendis delectus odio. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum in corrupti temporibus perferendis, unde quia deleniti repellat delectus, sit architecto a facere, ratione impedit dolore minus nemo aperiam mollitia maxime facilis magni modi. Odit rerum, eaque veritatis, placeat est nobis similique perspiciatis natus explicabo et, magni maiores reiciendis delectus odio.';
    const descriptionXpath = '//*[@id="tout-horizontal"]//*[@data-tout-element="body"]//div[@data-slate-editor="true"]';
    var genArr = Array.from({ length: 19000 }, (v, k) => k + 1);
 
@@ -27,8 +28,7 @@ describe('Re-rendering crash', function () {
    it('Re-rendering - catching the crash', () => {
       cy.wrap(genArr).each((index) => {
          cy.xpath(descriptionXpath)
-            .click()
-            .type("test-" + index);
+            .type(longText + "-" + index, { delay: 0 });
          cy.request('/___backend/content/pages/touts/horizontal$body');
       })
 })
