@@ -44,10 +44,10 @@
     "rc-tooltip": "^3.7.3",
     "react-fast-compare": "^2.0.4",
     "shelljs": "^0.8.4",
-    "slate": "^0.44.12",
+    "slate": "^0.59.0",
     "slate-plain-serializer": "^0.7.13",
-    "slate-react": "^0.21.18",
-    "slate-react-placeholder": "^0.1.20",
+    "slate-react": "^0.59.0",
+    "slate-react-placeholder": "^0.2.9",
     "uuid": "^3.3.2"
   },
   "peerDependencies": {
