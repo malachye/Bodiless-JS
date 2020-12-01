@@ -64,7 +64,9 @@ const SlateComponentProvider = (update: Function, type: string) => (
       const getters = {
         //getNode: (path: string[]) => fragment[0].data[path.join('$')],
         getNode: (path: string[]) => {
-          return '/test';
+          return {
+            href: '/test',
+          };
         },
         getKeys: () => ['slatenode'],
         hasError: () => bodilessNode.hasError(),
@@ -227,9 +229,9 @@ const getSelectorButton = <P extends object> (Component: RichTextComponent) => (
   const { toggleFuc, has } = {
     [RichTextItemType.block]: {
       toggleFuc: ({ value, editor, name }:getSelectorButtonToggleType) => (
-        blockUtils.toggleBlock({ value, editor, blockType: name })
+        toggleBlock({ value, editor, blockType: name })
       ),
-      has: blockUtils.hasBlock,
+      has: hasBlock,
     },
     [RichTextItemType.inline]: {
       toggleFuc: ({ value, editor, name }:getSelectorButtonToggleType) => (
