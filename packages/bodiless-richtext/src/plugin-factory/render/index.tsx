@@ -25,9 +25,9 @@ const createElementRenderPlugin = <P extends object> ({
 }:Props<P>) => {
   const plugin = {
     type,
-    renderElement: ({attributes, children}) => {
+    renderElement: ({attributes, children, element}) => {
       const { ref, ...restAttrs } = attributes;
-      return <Component {...restAttrs} forwardRef={ref}>{children}</Component>;
+      return <Component {...restAttrs} element={element} forwardRef={ref}>{children}</Component>;
     },
   };
   return plugin;

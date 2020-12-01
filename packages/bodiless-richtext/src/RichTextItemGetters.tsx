@@ -51,25 +51,16 @@ const addAttributes = <P extends object> (Component:ComponentType<P>) => (
 const SlateComponentProvider = (update: Function, type: string) => (
   <P extends object, D extends object>(Component:ComponentType<P>) => (
     (props:P & RenderNodeProps) => {
-      console.log('SlateComponentProvider.props');
-      console.log(props);
+      const { element, ...rest } = props;
       const { node: bodilessNode } = useNode();
       const editor = useSlate();
       const { selection } = editor;
-      const fragment = editor.getFragment();
       // when the editor looses focus and selection becomes null
       // see https://github.com/ianstormtaylor/slate/issues/3412
       const lastSelection = useRef<Range>(null);
-      const lastFragment = useRef([]);
       if (selection !== null) lastSelection.current = selection;
-      if (lastFragment !== null) lastFragment.current = fragment;
       const getters = {
-        //getNode: (path: string[]) => fragment[0].data[path.join('$')],
-        getNode: (path: string[]) => {
-          return {
-            href: '/test',
-          };
-        },
+        getNode: (path: string[]) => element.data[path.join('$')],
         getKeys: () => ['slatenode'],
         hasError: () => bodilessNode.hasError(),
         getPagePath: () => bodilessNode.pagePath,
@@ -79,13 +70,14 @@ const SlateComponentProvider = (update: Function, type: string) => (
         // tslint: disable-next-line:no-unused-vars
         setNode: (path: string[], componentData: any) => {
           const newData = {
-            ...lastFragment.current[0].data,
+            ...element.data,
             [path.join('$')]: { ...componentData },
           };
           return update({
             editor,
             type,
             data: newData,
+            at: lastSelection.current,
           });
         },
         deleteNode: () => {},
@@ -93,7 +85,7 @@ const SlateComponentProvider = (update: Function, type: string) => (
       const contentNode = new DefaultContentNode(actions, getters, 'slatenode');
       return (
         <NodeProvider node={contentNode}>
-          <Component {...props} />
+          <Component {...rest} />
         </NodeProvider>
       );
     }
