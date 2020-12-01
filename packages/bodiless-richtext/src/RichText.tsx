@@ -18,7 +18,7 @@ import React, {
   FC,
 } from 'react';
 import { flowRight, pick, flow, isEmpty } from 'lodash';
-import { createEditor, Editor } from 'slate';
+import { createEditor, Editor, Element } from 'slate';
 import { Slate, withReact, useSlate } from 'slate-react';
 import type { Plugin } from 'slate-react';
 import type { SchemaProperties } from 'slate';
@@ -63,6 +63,7 @@ import {
   getGlobalButtons,
   getSchema,
   getSelectorButtons,
+  getInlineButtons,
 } from './RichTextItemGetters';
 import { useKeyBoardShortcuts } from './useKeyBoardShortcuts';
 import TextSelectorButton from './components/TextSelectorButton';
@@ -85,7 +86,7 @@ import {
 import withDefaults from './withDefaults';
 import { withPreview } from './RichTextPreview';
 import withDataMigrator from './withDataMigrator';
-import type { RichTextProps } from './Type';
+import type { RichTextProps, RichTextComponents } from './Type';
 
 type WithSlateSchemaTypeProps = {
   schema: object,
@@ -191,6 +192,15 @@ const EditOnlyHoverMenu$: FC<Pick<Required<UI>, 'HoverMenu'>> = ({ HoverMenu, ch
 };
 const EditOnlyHoverMenu = observer(EditOnlyHoverMenu$);
 
+const withEditorSettings = (components: RichTextComponents) => (editor: Editor) => {
+  const { isInline } = editor;
+  const inlineTypes = getInlineButtons(components)
+    .map(Component => Component.id);
+  editor.isInline = (element: Element) => inlineTypes.includes(element.type) ? true : isInline(element);
+  return editor;
+}
+
+
 const BasicRichText = <P extends object>(props: P & RichTextProps) => {
   const {
     initialValue,
@@ -216,7 +226,15 @@ const BasicRichText = <P extends object>(props: P & RichTextProps) => {
   const finalUI = getUI(ui);
   const selectorButtons = getSelectorButtons(finalComponents).map(C => <C key={useUUID()} />);
 
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = useMemo(() =>
+    flow(
+      withReact,
+      withHistory,
+      withEditorSettings(finalComponents),
+    )(createEditor()),
+    [components]
+  );
+
   const initialValue$ = initialValue || [ ...defaultValue ];
   const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
 

@@ -259,6 +259,9 @@ const getSelectorButton = <P extends object> (Component: RichTextComponent) => (
   return <Button><Component {...props}>{ Component.id }</Component></Button>;
 };
 
+const getInlineButtons = (components: RichTextComponents) => Object.values(components)
+  .filter(Component => Component.type === RichTextItemType.inline);
+
 /*
   getSelectorButtons takes an array of RichTextitems and maps that to a array of buttons
   used in the Rich Text selector
@@ -290,4 +293,5 @@ export {
   getHoverButtons,
   getGlobalButtons,
   getSchema,
+  getInlineButtons,
 };
