@@ -51,6 +51,8 @@ const addAttributes = <P extends object> (Component:ComponentType<P>) => (
 const SlateComponentProvider = (update: Function, type: string) => (
   <P extends object, D extends object>(Component:ComponentType<P>) => (
     (props:P & RenderNodeProps) => {
+      console.log('SlateComponentProvider.props');
+      console.log(props);
       const { node: bodilessNode } = useNode();
       const editor = useSlate();
       const { selection } = editor;

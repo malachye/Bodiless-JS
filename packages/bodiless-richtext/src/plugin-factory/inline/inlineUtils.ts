@@ -63,7 +63,11 @@ export const wrapInline = (
   const { selection } = editor
   const isCollapsed = selection && Range.isCollapsed(selection)
 
-  const inlineNode = createInline(inlineType, data);
+  const inlineNode = {
+    data,
+    type: inlineType,
+    children: [],
+  };
 
   if (isCollapsed) {
     Transforms.insertNodes(editor, inlineNode)

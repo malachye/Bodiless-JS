@@ -49,6 +49,7 @@ import {
   DesignableComponents,
   withDisplayName,
 } from '@bodiless/fclasses';
+import { withHistory } from 'slate-history'
 import {
   withSlateEditor,
   Content,
@@ -215,7 +216,7 @@ const BasicRichText = <P extends object>(props: P & RichTextProps) => {
   const finalUI = getUI(ui);
   const selectorButtons = getSelectorButtons(finalComponents).map(C => <C key={useUUID()} />);
 
-  const editor = useMemo(() => withReact(createEditor()), []);
+  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
   const initialValue$ = initialValue || [ ...defaultValue ];
   const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
 
