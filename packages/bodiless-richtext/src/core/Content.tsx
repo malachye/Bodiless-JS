@@ -53,11 +53,9 @@ const renderElement = (props) => {
 }
 
 const Content = (props: EditableProps) => {
-  const editorContext = useSlateContext();
   return (
     <Editable
       {...props}
-      { ...editorContext!.editorProps}
       renderLeaf={renderLeaf}
       renderElement={renderElement}
     />
