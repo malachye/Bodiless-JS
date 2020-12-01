@@ -12,28 +12,12 @@
  * limitations under the License.
  */
 
-export default {
-  document: {
-    object: 'document',
-    data: {},
-    nodes: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        data: {},
-        nodes: [
-          {
-            object: 'text',
-            leaves: [
-              {
-                object: 'leaf',
-                text: '',
-                marks: [],
-              },
-            ],
-          },
-        ],
-      },
+
+export default [
+  {
+    type: 'paragraph',
+    children: [
+      { text: '' }
     ],
   },
-};
+]

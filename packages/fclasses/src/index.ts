@@ -46,6 +46,7 @@ import type {
 } from './Design';
 import {
   flowIf, hasProp, withoutProps, withOnlyProps,
+  withDisplayName,
 } from './hoc-util';
 import Fragment from './Fragment';
 
@@ -77,6 +78,7 @@ export {
   addClassesIf,
   removeClassesIf,
   Fragment,
+  withDisplayName,
 };
 
 export type {

@@ -35,9 +35,9 @@ Exclude<keyof SlateEditorProps, 'value'>
 >;
 
 const withNodeStateHandlers = (Editor: React.FC<SlateEditorProps>) => (
-  observer(({ initialValue, onChange: originalOnChange, ...rest }: Props) => {
+  observer(({ value: originalValue, onChange: originalOnChange, ...rest }: Props) => {
     const { value, onChange }: NodeStateHandlers = useNodeStateHandlers({
-      initialValue,
+      initialValue: originalValue,
       onChange: originalOnChange,
     });
     const { isEdit } = useEditContext();

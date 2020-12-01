@@ -12,32 +12,26 @@
  * limitations under the License.
  */
 
-import React, { ComponentType } from 'react';
-import {
-  Value,
-  Editor,
-  SchemaProperties,
-} from 'slate';
+import React, { useRef, ComponentType } from 'react';
+import { Editor } from 'slate';
 
 import {
   NodeProvider, DefaultContentNode, withoutProps, useNode,
 } from '@bodiless/core';
-import { RenderNodeProps } from 'slate-react';
+import { useSlate } from 'slate-react';
 import { flow } from 'lodash';
 import {
   createBlockButton,
   createInlineButton,
   createMarkButton,
-  createNodeRenderPlugin,
-  createMarkRenderPlugin,
-  createKeyboardPlugin,
-  blockUtils,
+  createElementRenderPlugin,
+  createLeafRenderPlugin,
+  hasBlock,
   hasInline,
   hasMark,
+  toggleBlock,
   toggleInline,
   toggleMark,
-  createToggleMark,
-  createToggleInline,
   withToggle,
   updateInline,
 } from './plugin-factory';
@@ -54,13 +48,24 @@ const addAttributes = <P extends object> (Component:ComponentType<P>) => (
     return <Component {...props} {...attributes} />;
   }
 );
-const SlateComponentProvider = (update:Function) => (
+const SlateComponentProvider = (update: Function, type: string) => (
   <P extends object, D extends object>(Component:ComponentType<P>) => (
     (props:P & RenderNodeProps) => {
       const { node: bodilessNode } = useNode();
-      const { editor, node } = props;
+      const editor = useSlate();
+      const { selection } = editor;
+      const fragment = editor.getFragment();
+      // when the editor looses focus and selection becomes null
+      // see https://github.com/ianstormtaylor/slate/issues/3412
+      const lastSelection = useRef<Range>(null);
+      const lastFragment = useRef([]);
+      if (selection !== null) lastSelection.current = selection;
+      if (lastFragment !== null) lastFragment.current = fragment;
       const getters = {
-        getNode: (path: string[]) => node.data.toJS()[path.join('$')],
+        //getNode: (path: string[]) => fragment[0].data[path.join('$')],
+        getNode: (path: string[]) => {
+          return '/test';
+        },
         getKeys: () => ['slatenode'],
         hasError: () => bodilessNode.hasError(),
         getPagePath: () => bodilessNode.pagePath,
@@ -68,14 +73,17 @@ const SlateComponentProvider = (update:Function) => (
       };
       const actions = {
         // tslint: disable-next-line:no-unused-vars
-        setNode: (path: string[], componentData: any) => update({
-          node,
-          editor,
-          componentData: {
-            ...node.data.toJS(),
+        setNode: (path: string[], componentData: any) => {
+          const newData = {
+            ...lastFragment.current[0].data,
             [path.join('$')]: { ...componentData },
-          },
-        }),
+          };
+          return update({
+            editor,
+            type,
+            data: newData,
+          });
+        },
         deleteNode: () => {},
       };
       const contentNode = new DefaultContentNode(actions, getters, 'slatenode');
@@ -104,15 +112,16 @@ const getRenderPlugin = <P extends object> (Component: RenderPluginComponent) =>
   } = Component;
   const { creates, WrappedComponent } = {
     [RichTextItemType.block]: {
-      creates: createNodeRenderPlugin,
-      WrappedComponent: SlateComponentProvider(blockUtils.updateBlock)(Component),
+      creates: createElementRenderPlugin,
+      //WrappedComponent: SlateComponentProvider(blockUtils.updateBlock)(Component),
+      WrappedComponent: Component,
     },
     [RichTextItemType.inline]: {
-      creates: createNodeRenderPlugin,
-      WrappedComponent: SlateComponentProvider(updateInline)(Component),
+      creates: createElementRenderPlugin,
+      WrappedComponent: SlateComponentProvider(updateInline, id)(Component),
     },
     [RichTextItemType.mark]: {
-      creates: createMarkRenderPlugin,
+      creates: createLeafRenderPlugin,
       WrappedComponent: Component,
     },
   }[type];
@@ -128,26 +137,7 @@ const getRenderPlugin = <P extends object> (Component: RenderPluginComponent) =>
     type: id,
   });
 };
-const getShortcutPlugin = <P extends object> (Component: RichTextComponent) => {
-  const {
-    type,
-    id,
-    keyboardKey,
-  } = Component;
-  if (!keyboardKey) {
-    throw Error('keyboardKey need to get ShortcutPlugin');
-  }
-  const toggle = {
-    [RichTextItemType.block]: blockUtils.createToggleBlock(id),
-    [RichTextItemType.mark]: createToggleMark(id),
-    [RichTextItemType.inline]: createToggleInline(id),
 
-  }[type];
-  return createKeyboardPlugin({
-    toggle,
-    key: keyboardKey,
-  });
-};
 /*
   getPlugins takes an array of data items and pass them though to getPlugin
 */
@@ -155,10 +145,6 @@ const getPlugins = (components: RichTextComponents) => [
   ...Object.values(components).map(Component => (
     getRenderPlugin(Component)
   )),
-  ...Object.values(components)
-    // eslint-disable-next-line no-prototype-builtins
-    .filter(Component => Component.hasOwnProperty('keyboardKey'))
-    .map(Component => getShortcutPlugin(Component)),
 ];
 /*
   get HoverButton takes a Item and convert it
@@ -192,7 +178,7 @@ const getGlobalButton = (Component: RichTextComponentWithGlobalButton) => (edito
   icon: Component.globalButton.icon,
   name: Component.id,
   global: true,
-  isActive: () => blockUtils.hasBlock(editor.value, Component.id),
+  isActive: () => hasBlock(editor.value, Component.id),
   handler: () => {
     const options = {
       editor,
@@ -200,9 +186,9 @@ const getGlobalButton = (Component: RichTextComponentWithGlobalButton) => (edito
       value: editor.value,
     };
     if (Component.isAtomicBlock) {
-      blockUtils.insertBlock(options);
+      insertBlock(options);
     } else {
-      blockUtils.toggleBlock(options);
+      toggleBlock(options);
     }
   },
 });

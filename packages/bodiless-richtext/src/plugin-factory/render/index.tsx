@@ -13,42 +13,37 @@
  */
 
 import React from 'react';
-import { Plugin, RenderNodeProps } from 'slate-react';
 
 type Props<P> = {
   Component: React.ComponentType<P>,
   type: string,
 };
-const createNodeRenderPlugin = <P extends object> ({
+
+const createElementRenderPlugin = <P extends object> ({
   Component,
   type,
 }:Props<P>) => {
-  const plugin: Plugin = {
-    renderNode: (props, editor, next) => {
-      switch (props.node.type) {
-        case type:
-          return <Component {...props as P & RenderNodeProps} />;
-        default:
-          return next();
-      }
+  const plugin = {
+    type,
+    renderElement: ({attributes, children}) => {
+      return <Component {...attributes}>{children}</Component>;
     },
   };
   return plugin;
 };
-const createMarkRenderPlugin = <P extends object> ({
+
+const createLeafRenderPlugin = <P extends object> ({
   Component,
   type,
 }:Props<P>) => {
-  const plugin: Plugin = {
-    renderMark: (props, editor, next) => {
-      switch (props.mark.type) {
-        case type:
-          return <Component {...props as unknown as P & RenderNodeProps} />;
-        default:
-          return next();
-      }
+  const plugin = {
+    type,
+    renderLeaf: ({attributes, children}) => {
+      return <Component {...attributes}>{children}</Component>;
     },
   };
   return plugin;
 };
-export { createNodeRenderPlugin, createMarkRenderPlugin };
+
+
+export { createElementRenderPlugin, createLeafRenderPlugin };

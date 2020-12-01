@@ -47,7 +47,6 @@
     "slate": "^0.59.0",
     "slate-plain-serializer": "^0.7.13",
     "slate-react": "^0.59.0",
-    "slate-react-placeholder": "^0.2.9",
     "uuid": "^3.3.2"
   },
   "peerDependencies": {

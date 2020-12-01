@@ -12,8 +12,14 @@
  * limitations under the License.
  */
 
-import React, { ComponentType, useMemo, FC } from 'react';
-import { flowRight, pick, flow } from 'lodash';
+import React, {
+  ComponentType,
+  useMemo,
+  FC,
+} from 'react';
+import { flowRight, pick, flow, isEmpty } from 'lodash';
+import { createEditor, Editor } from 'slate';
+import { Slate, withReact, useSlate } from 'slate-react';
 import type { Plugin } from 'slate-react';
 import type { SchemaProperties } from 'slate';
 import { observer } from 'mobx-react-lite';
@@ -41,6 +47,7 @@ import {
   extendDesign,
   Design,
   DesignableComponents,
+  withDisplayName,
 } from '@bodiless/fclasses';
 import {
   withSlateEditor,
@@ -56,6 +63,7 @@ import {
   getSchema,
   getSelectorButtons,
 } from './RichTextItemGetters';
+import { useKeyBoardShortcuts } from './useKeyBoardShortcuts';
 import TextSelectorButton from './components/TextSelectorButton';
 import { uiContext, getUI, UI } from './RichTextContext';
 import defaultValue from './default-value';
@@ -75,6 +83,7 @@ import {
 } from './meta';
 import withDefaults from './withDefaults';
 import { withPreview } from './RichTextPreview';
+import withDataMigrator from './withDataMigrator';
 import type { RichTextProps } from './Type';
 
 type WithSlateSchemaTypeProps = {
@@ -127,9 +136,7 @@ const withSlateActivator = <P extends object>(Component: ComponentType<P>) => (p
 
   const slateContext = {
     editorProps,
-    editorRef: previousSlateContext!.editorRef,
     value: previousSlateContext!.value,
-    editor: previousSlateContext!.editor,
   };
   return (
     <SlateEditorContext.Provider value={slateContext}>
@@ -143,8 +150,7 @@ type UseMenuOptionsProps = {
 };
 // This is a call back that goes to withMenuOptions so that we can add button to the global menu
 const useMenuOptions = (props: UseMenuOptionsProps) => {
-  const slateContext = useSlateContext();
-  const { editor } = slateContext!;
+  const editor = useSlate();
   return useMemo(
     () => (props.globalButtons ? props.globalButtons(editor) : []),
     [props.globalButtons],
@@ -162,8 +168,7 @@ type RichTextProviderProps = {
 } & UseMenuOptionsProps;
 type RichTextProviderType = ComponentType<RichTextProviderProps>;
 const RichTextProvider = flowRight(
-  withNode,
-  withNodeStateHandlers,
+  withDisplayName('RichTextProvider'),
   withSlateEditor,
   ifMenuOptions(
     withMenuOptions({ useMenuOptions, name: 'editor' }),
@@ -185,13 +190,16 @@ const EditOnlyHoverMenu$: FC<Pick<Required<UI>, 'HoverMenu'>> = ({ HoverMenu, ch
 };
 const EditOnlyHoverMenu = observer(EditOnlyHoverMenu$);
 
-const BasicRichText = <P extends object, D extends object>(props: P & RichTextProps<D>) => {
+const BasicRichText = <P extends object>(props: P & RichTextProps) => {
   const {
     initialValue,
     components,
     ui,
+    onChange,
+    value,
     ...rest
   } = props;
+
   const {
     finalComponents, plugins, schema, globalButtons,
   } = useMemo(() => {
@@ -206,29 +214,42 @@ const BasicRichText = <P extends object, D extends object>(props: P & RichTextPr
   const { HoverMenu } = getUI(ui);
   const finalUI = getUI(ui);
   const selectorButtons = getSelectorButtons(finalComponents).map(C => <C key={useUUID()} />);
+
+  const editor = useMemo(() => withReact(createEditor()), []);
+  const initialValue$ = initialValue || [ ...defaultValue ];
+  const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
+
   return (
-    <uiContext.Provider value={finalUI}>
-      <RichTextProvider
-        {...rest}
-        initialValue={initialValue || { ...defaultValue }}
-        plugins={plugins}
-        globalButtons={globalButtons}
-        schema={schema}
-      >
-        <EditOnlyHoverMenu HoverMenu={HoverMenu}>
-          {
-            getHoverButtons(finalComponents).map(C => <C key={useUUID()} />)
-          }
-          {
-            selectorButtons.length > 0
-            && (
-              <TextSelectorButton>{ selectorButtons }</TextSelectorButton>
-            )
-          }
-        </EditOnlyHoverMenu>
-        <Content />
-      </RichTextProvider>
-    </uiContext.Provider>
+    <Slate editor={editor} value={value$} onChange={onChange}>
+      <uiContext.Provider value={finalUI}>
+        <RichTextProvider
+          {...rest}
+          initialValue={initialValue$}
+          plugins={plugins}
+          globalButtons={globalButtons}
+          schema={schema}
+        >
+          <EditOnlyHoverMenu HoverMenu={HoverMenu}>
+            {
+              getHoverButtons(finalComponents).map(C => <C key={useUUID()} />)
+            }
+            {
+              selectorButtons.length > 0
+              && (
+                <TextSelectorButton>{selectorButtons}</TextSelectorButton>
+               )
+            }
+          </EditOnlyHoverMenu>
+          <Content
+            {...useKeyBoardShortcuts({
+              editor,
+              components: finalComponents,
+            })}
+            {...rest }
+          />
+        </RichTextProvider>
+      </uiContext.Provider>
+    </Slate>
   );
 };
 const defaults = {
@@ -280,6 +301,9 @@ const apply = (design: Design<DesignableComponents>) => {
 };
 
 const RichText = flow(
+  withDataMigrator,
+  withNodeStateHandlers,
+  withNode,
   withPreview,
   designable(apply, 'RichText'),
 )(BasicRichText);

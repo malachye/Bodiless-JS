@@ -13,21 +13,53 @@
  */
 
 import React from 'react';
-import { Editor as ReactEditor } from 'slate-react';
+import { Editable, DefaultElement, DefaultLeaf } from 'slate-react';
 import { useSlateContext } from './SlateEditorContext';
-import { EditorContext } from '../Type';
+import type { EditorContext } from '../Type';
 
-type Props = {
-  className?: string;
-  wrapperStyle?: object;
-};
+type EditableProps = EditorContext['editorProps'];
 
-const Content: React.FC<Props> = () => {
-  const editorContext: EditorContext = useSlateContext();
+const withWrapper = WrapperComponent => Component => ({children, ...rest}) => (
+  <WrapperComponent {...rest}>
+    <Component>{children}</Component>
+  </WrapperComponent>
+)
+
+
+const renderLeaf = (props) => {
+  const { leaf } = props;
+  const editorContext = useSlateContext();
+  const plugins = editorContext?.editorProps!.plugins;
+  let renderLeaf$ = DefaultLeaf;
+  plugins.forEach(plugin => {
+    if (plugin.hasOwnProperty('renderLeaf') && leaf[plugin.type]) {
+      renderLeaf$ = withWrapper(plugin.renderLeaf)(renderLeaf$);
+    }
+  });
+  return renderLeaf$(props);
+}
+
+const renderElement = (props) => {
+  const { element } = props;
+  const editorContext = useSlateContext();
+  const plugins = editorContext?.editorProps!.plugins;
+  let renderElement$ = DefaultElement;
+  plugins.forEach(plugin => {
+    if (plugin.hasOwnProperty('renderElement') && element.type === plugin.type) {
+      renderElement$ = plugin.renderElement;
+    }
+  });
+  return renderElement$(props);
+}
+
+const Content = (props: EditableProps) => {
+  const editorContext = useSlateContext();
   return (
-    <ReactEditor
-      {...editorContext!.editorProps}
-      ref={editorContext!.editorRef}
+    <Editable
+      {...props}
+      { ...editorContext!.editorProps}
+      renderLeaf={renderLeaf}
+      renderElement={renderElement}
     />
   );
 };

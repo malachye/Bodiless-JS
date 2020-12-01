@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { Value } from 'slate';
+import { useSlate } from 'slate-react';
 import {
   EditorContext,
   ToggleProps,
@@ -42,19 +42,18 @@ const withToggle = <P extends requiredProps> (opts:Opts) => (
   (Component:any) => (props:P) => {
     const { toggle, isActive, icon } = opts;
     const { children, className = '' } = props;
-    const editorContext: EditorContext = useSlateContext();
+    const editor = useSlate();
     const componentName = Component.defaultProps ? Component.defaultProps.name : undefined;
     return (
       <PluginButton
         componentName={componentName}
         onMouseDown={
           () => toggle({
-            editor: editorContext!.editor,
-            value: editorContext!.value,
+            editor,
           })
         }
         className={`${
-          isActive(editorContext!.value) ? 'active bl-active' : ''
+          isActive(editor) ? 'active bl-active' : ''
         } ${className}`}
         icon={icon}
       >

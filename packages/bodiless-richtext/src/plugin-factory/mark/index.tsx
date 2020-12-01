@@ -17,11 +17,6 @@ import { Plugin, EventHook, RenderMarkProps } from 'slate-react';
 import { hasMark, createToggleMark, toggleMark } from './markUtils';
 
 //
-// Keyboard
-//
-import MarkKeyboardShortcut from './markKeyboardShortcut';
-
-//
 // External
 //
 import createMarkButton from './createMarkButton';
