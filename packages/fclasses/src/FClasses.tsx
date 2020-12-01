@@ -121,12 +121,12 @@ const apply = (
  * @param Component The component to be made stylable.
  */
 const stylable = <P extends Classable>(Component: ComponentType<P> | string) => {
-  const Stylable = (props: P & StylableProps) => {
-    const { fClasses, className, ...rest } = props;
+  const Stylable = React.forwardRef((props: P & StylableProps, ref) => {
+    const { fClasses, className, forwardRef, ...rest } = props;
     const classes = apply(fClasses);
     const newClassName = asClassName(className ? apply(asFClasses(className), classes) : classes);
-    return <Component {...rest as unknown as P} className={newClassName} />;
-  };
+    return <Component {...rest as unknown as P} className={newClassName} ref={forwardRef} />;
+  });
   Stylable.displayName = 'Stylable';
   return Stylable;
 };
