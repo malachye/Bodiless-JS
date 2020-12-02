@@ -15,7 +15,11 @@
 import { ComponentType } from 'react';
 import { Node, Editor, Operation } from 'slate';
 import Immutable from 'immutable';
-import type { EditableProps } from 'slate-react/dist/components/editable';
+import type {
+  EditableProps,
+  RenderLeafProps,
+  RenderElementProps,
+} from 'slate-react/dist/components/editable';
 import type { DesignableComponents } from '@bodiless/fclasses';
 import type { UI } from './RichTextContext';
 
@@ -41,6 +45,9 @@ export type NodeEditForm = ComponentType<FormProps>;
 export type EditorOnChange = (value: Node[]) => void;
 
 export type EditorContext = {
+  value: Value,
+  plugins: Plugin[],
+  onChange: EditorOnChange,
   editorProps: EditableProps;
 } | null;
 
@@ -91,3 +98,18 @@ export type RichTextProps = {
   value?: Value;
   onChange: (value: Value) => void;
 } & EditableProps;
+
+export type Plugin = {
+  type: string,
+  renderElement?: EditableProps['renderElement'],
+  renderLeaf?: EditableProps['renderLeaf'],
+};
+
+export type RenderElementComponentType = ComponentType<RenderElementProps>;
+export type RenderLeafComponentType = ComponentType<RenderLeafProps>;
+
+export type {
+  EditableProps,
+  RenderLeafProps,
+  RenderElementProps,
+};

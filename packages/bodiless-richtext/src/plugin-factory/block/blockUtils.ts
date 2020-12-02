@@ -32,37 +32,11 @@ export const hasBlock = (format: string, editor: Editor) => isBlockActive(editor
 export const createIsActive = (format: string) => (editor: Editor) => isBlockActive(editor, format);
 
 const DEFAULT_NODE = 'paragraph';
-export const getBlock = (value: Value, blockType: string) => value.blocks
-  .filter(block => Boolean(block && block.type === blockType))
-  .first();
+
 export const createBlock = (blockType: string, data: DataJSON) => ({
   data,
   type: blockType,
 });
-export const hasMultiBlocks = (value: Value) => value.blocks.size > 1;
-export const removeBlock = (editor: Editor, blockType: string) => (
-  editor.setBlocks(DEFAULT_NODE).unwrapBlock(blockType)
-);
-
-export const removeBlockByNode = (editor: Editor, node: Block) => 
-  Transforms.unwrapNodes(editor, {
-    match: n => LIST_TYPES.includes(n.type as string),
-    split: true,
-  })
-
-export const wrapBlock = (
-  editor: Editor,
-  blockType: string,
-  data: DataJSON,
-) => {
-  editor.setBlocks(createBlock(blockType, data));
-};
-
-export type UpdateBlockOptions = {
-  editor: Editor;
-  componentData: DataJSON;
-  node: Block;
-};
 
 export type ToggleBlockOptions = {
   editor: Editor;

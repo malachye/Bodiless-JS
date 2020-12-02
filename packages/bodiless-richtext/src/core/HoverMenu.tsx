@@ -41,7 +41,7 @@ function updateMenu(menu: HTMLElement | null, editor: ReactEditor) {
   const { selection } = editor;
 
   if (!menu) {
-    return
+    return;
   }
 
   if (
@@ -51,10 +51,11 @@ function updateMenu(menu: HTMLElement | null, editor: ReactEditor) {
     Editor.string(editor, selection) === ''
   ) {
     menu.removeAttribute('style')
-    return
+    return;
   }
 
   const domSelection = window.getSelection();
+  if (!domSelection) return;
   const domRange = domSelection.getRangeAt(0);
   const rect = domRange.getBoundingClientRect();
   const offsetLeft = rect.left + window.pageXOffset - menu.offsetWidth / 2 + rect.width / 2;

@@ -12,43 +12,56 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {
+  ComponentType,
+  PropsWithChildren,
+} from 'react';
 import { Editable, DefaultElement, DefaultLeaf } from 'slate-react';
 import { useSlateContext } from './SlateEditorContext';
-import type { EditorContext } from '../Type';
+import {
+  RenderLeafProps,
+  RenderElementProps,
+  EditableProps,
+} from '../Type';
 
-type EditableProps = EditorContext['editorProps'];
-
-const withWrapper = WrapperComponent => Component => ({children, ...rest}) => (
+const withWrapper = (
+  WrapperComponent: ComponentType,
+) => <P extends object>(
+  Component: ComponentType<PropsWithChildren<P>>,
+) => ({children, ...rest}: PropsWithChildren<P>) => (
   <WrapperComponent {...rest}>
     <Component>{children}</Component>
   </WrapperComponent>
-)
+);
 
 
-const renderLeaf = (props) => {
+const renderLeaf = (props: RenderLeafProps) => {
   const { leaf } = props;
   const editorContext = useSlateContext();
-  const plugins = editorContext?.editorProps!.plugins;
+  const plugins = editorContext?.plugins;
   let renderLeaf$ = DefaultLeaf;
-  plugins.forEach(plugin => {
-    if (plugin.hasOwnProperty('renderLeaf') && leaf[plugin.type]) {
-      renderLeaf$ = withWrapper(plugin.renderLeaf)(renderLeaf$);
-    }
-  });
+  if (plugins !== undefined) {
+    plugins.forEach(plugin => {
+      if (plugin.renderLeaf !== undefined && leaf[plugin.type]) {
+        renderLeaf$ = withWrapper(plugin.renderLeaf)(renderLeaf$);
+      }
+    })
+  };
   return renderLeaf$(props);
 }
 
-const renderElement = (props) => {
+const renderElement = (props: RenderElementProps) => {
   const { element } = props;
   const editorContext = useSlateContext();
-  const plugins = editorContext?.editorProps!.plugins;
+  const plugins = editorContext?.plugins;
   let renderElement$ = DefaultElement;
-  plugins.forEach(plugin => {
-    if (plugin.hasOwnProperty('renderElement') && element.type === plugin.type) {
-      renderElement$ = plugin.renderElement;
-    }
-  });
+  if (plugins !== undefined) {
+    plugins.forEach(plugin => {
+      if (plugin.renderElement !== undefined && element.type === plugin.type) {
+        renderElement$ = plugin.renderElement;
+      }
+    })
+  };
   return renderElement$(props);
 }
 

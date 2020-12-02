@@ -15,7 +15,6 @@
 import createBlockButton from './createBlockButton';
 import {
   hasBlock,
-  insertBlock,
   toggleBlock,
   createToggleBlock,
 } from './blockUtils';
@@ -24,6 +23,5 @@ export {
   createBlockButton,
   createToggleBlock,
   hasBlock,
-  insertBlock,
   toggleBlock,
 };

@@ -14,11 +14,7 @@
 
 import React from 'react';
 import { useSlate } from 'slate-react';
-import {
-  EditorContext,
-  ToggleProps,
-} from '../Type';
-import { useSlateContext } from '../core';
+import { ToggleProps, Value } from '../Type';
 import PluginButton from '../components/PluginButton';
 
 const defaultButton = {

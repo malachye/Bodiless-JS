@@ -13,46 +13,37 @@
  */
 
 import React, {
-  useState,
   Fragment,
   ComponentType,
 } from 'react';
 import SlateEditorContext from './SlateEditorContext';
 import '@material/react-material-icon/dist/material-icon.css';
-import { EditorOnChange } from '../Type';
+import {
+  EditorOnChange,
+  EditableProps,
+  Plugin,
+  Value,
+} from '../Type';
 
 type Props = {
   initialValue: object;
-} & EditorProps;
+  onChange: EditorOnChange,
+  plugins: Plugin[],
+  value: Value,
+  editorProps: EditableProps,
+};
 
 const withSlateEditor = <P extends object> (Component:ComponentType<P>) => (props:P & Props) => {
   const {
-    initialValue, value, onChange, placeholder, plugins = [], ...rest
+    initialValue, value, onChange, plugins = [], ...rest
   } = props;
-  // It is important to keep track of internal activeValue
-  // state in case outer activeValue is not provided.
-  // Value is used in plugins and buttons before Content is mounted and its activeValue is obtained.
-  const [localValueState, setLocalValue] = useState<object>(
-    value || initialValue
-  );
-  const internalOnChange: EditorOnChange = change => {
-    const { value: valueFromChange } = change;
-    if (typeof onChange === 'function') {
-      onChange(change);
-    } else if (typeof value !== 'undefined') {
-      setLocalValue(valueFromChange);
-    }
-
-    return change;
-  };
 
   const editorContextValue = {
-    value: value || localValueState,
+    value,
+    plugins,
+    onChange,
     editorProps: {
       ...rest,
-      plugins,
-      onChange: internalOnChange,
-      value: value || localValueState,
     },
   };
 

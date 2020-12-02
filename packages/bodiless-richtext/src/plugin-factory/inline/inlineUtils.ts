@@ -13,7 +13,7 @@
  */
 
 import { Editor, Transforms, Range } from 'slate';
-import { DataJSON } from '../../Type';
+import { DataJSON, Value } from '../../Type';
 
 // leveraging https://github.com/ianstormtaylor/slate/issues/3481#issuecomment-581670722
 const isInlineActive = (editor: Editor, format: string) => {
@@ -31,25 +31,15 @@ export const createIsActive = (format: string) => (editor: Editor) => isInlineAc
 
 export const hasInline = (format: string, editor: Editor) => isInlineActive(editor, format);
 
-export const getInline = (value: Value, inlineType: string) => value.inlines
-  .filter(inline => Boolean(inline && inline.type === inlineType))
-  .first();
 export const createInline = (inlineType: string, data: DataJSON) => ({
   data,
   type: inlineType,
 });
-export const hasMultiBlocks = (value: Value) => value.blocks.size > 1;
 
 export const removeInline = (
   editor: Editor,
   inlineType: string,
-  // ToDo: check if we need to focus
 ) => Transforms.unwrapNodes(editor, { match: n => n.type === inlineType });
-
-export const removeInlineByNode = (editor: Editor, node: Inline) => {
-  editor.moveToRangeOfNode(node);
-  editor.unwrapInline(node.type).focus();
-};
 
 export const wrapInline = (
   editor: Editor,
