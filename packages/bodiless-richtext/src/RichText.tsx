@@ -16,7 +16,9 @@ import React, {
   ComponentType,
   useMemo,
   FC,
+  useRef,
 } from 'react';
+import isEqual from 'react-fast-compare';
 import { flowRight, pick, flow, isEmpty } from 'lodash';
 import { createEditor, Editor, Element } from 'slate';
 import { Slate, withReact, useSlate } from 'slate-react';
@@ -201,7 +203,7 @@ const withEditorSettings = (components: RichTextComponents) => (editor: Editor) 
 }
 
 
-const BasicRichText = <P extends object>(props: P & RichTextProps) => {
+const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) => {
   const {
     initialValue,
     components,
@@ -226,20 +228,21 @@ const BasicRichText = <P extends object>(props: P & RichTextProps) => {
   const finalUI = getUI(ui);
   const selectorButtons = getSelectorButtons(finalComponents).map(C => <C key={useUUID()} />);
 
-  const editor = useMemo(() =>
+  const editor = useRef<Editor>(
     flow(
       withReact,
       withHistory,
       withEditorSettings(finalComponents),
-    )(createEditor()),
-    [components]
+    )(createEditor())
   );
 
   const initialValue$ = initialValue || [ ...defaultValue ];
   const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
 
+  console.log('========BasicRichText rendering========');
+
   return (
-    <Slate editor={editor} value={value$} onChange={onChange}>
+    <Slate editor={editor.current} value={value$} onChange={onChange}>
       <uiContext.Provider value={finalUI}>
         <RichTextProvider
           {...rest}
@@ -270,7 +273,8 @@ const BasicRichText = <P extends object>(props: P & RichTextProps) => {
       </uiContext.Provider>
     </Slate>
   );
-};
+}, (prevProps, nextProps) => isEqual(prevProps.value, nextProps.value));
+
 const defaults = {
   SuperScript: Sup,
   Bold: B,
