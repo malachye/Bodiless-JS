@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { toJS } from 'mobx';
 //import { Value, ValueJSON } from 'slate';
 import isEqual from 'react-fast-compare';
 import { useNode, useUUID } from '@bodiless/core';
 import { Change } from './Type';
-import MobxStateContainer from './MobxStateContainer';
 
 type Data = {
   document: object;
@@ -45,20 +44,6 @@ type TUseNodeStateHandlers = (
 ) => {
   value: Value;
   onChange: TOnChange;
-};
-
-const stateContainer = React.createContext<MobxStateContainer>(
-  new MobxStateContainer(),
-);
-
-function useStateContainer() {
-  return React.useContext(stateContainer);
-}
-
-const preserveAll = {
-  preserveSelection: true,
-  preserveData: true,
-  preserveDecorations: true,
 };
 
 // Create the onChange prop.
