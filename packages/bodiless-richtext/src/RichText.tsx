@@ -20,8 +20,9 @@ import React, {
 } from 'react';
 import isEqual from 'react-fast-compare';
 import { flowRight, pick, flow, isEmpty } from 'lodash';
-import { createEditor, Editor, Element } from 'slate';
-import { Slate, withReact, useSlate } from 'slate-react';
+import { createEditor, Editor } from 'slate';
+import type { Element } from 'slate';
+import { Slate, withReact, useSlate, ReactEditor } from 'slate-react';
 import { observer } from 'mobx-react-lite';
 import {
   useEditContext,
@@ -90,6 +91,7 @@ import type {
   RichTextProps,
   RichTextComponents,
   EditorContext,
+  Plugin,
 } from './Type';
 
 type WithSlateSchemaTypeProps = {
@@ -173,7 +175,6 @@ const ifMenuOptions = ifToggledOn((props: UseMenuOptionsProps) => {
 
 type RichTextProviderProps = {
   plugins: Plugin[],
-  schema?: SchemaProperties,
 } & UseMenuOptionsProps;
 type RichTextProviderType = ComponentType<RichTextProviderProps>;
 const RichTextProvider = flowRight(
@@ -232,12 +233,12 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
   const finalUI = getUI(ui);
   const selectorButtons = getSelectorButtons(finalComponents).map(C => <C key={useUUID()} />);
 
-  const editor = useRef<Editor>(
+  const editor = useRef<ReactEditor>(
     flow(
       withReact,
       withHistory,
       withEditorSettings(finalComponents),
-    )(createEditor())
+    )(createEditor()) as ReactEditor
   );
 
   const initialValue$ = initialValue || [ ...defaultValue ];

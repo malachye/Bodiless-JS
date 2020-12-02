@@ -47,6 +47,19 @@ export type createToggleBlockOptions = {
   editor: Editor,
 };
 
+
+export const insertBlock = ({
+  editor,
+  blockType,
+}: ToggleBlockOptions) => {
+  const blockNode = {
+    data: {},
+    type: blockType,
+    children: [],
+  };
+  Transforms.insertNodes(editor, blockNode);
+};
+
 export const toggleBlock = ({
   editor,
   blockType,

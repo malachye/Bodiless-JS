@@ -14,7 +14,6 @@
 
 import React, { ComponentType } from 'react';
 import Plain from 'slate-plain-serializer';
-import { Value } from 'slate';
 import { flowRight } from 'lodash';
 import { useNode, withNode } from '@bodiless/core';
 
@@ -24,7 +23,7 @@ type Data = {
 
 const useRichtextPlainSerializer = () => {
   const { node } = useNode<Data>();
-  const value = node.data.document ? Value.fromJSON(node.data) : undefined;
+  const value = node.data;
   return value ? Plain.serialize(value) : '';
 };
 

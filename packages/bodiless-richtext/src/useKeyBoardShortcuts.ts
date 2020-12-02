@@ -13,7 +13,6 @@
  */
 
 import isHotkey from 'is-hotkey'
-import { Editor } from 'slate';
 import type { RichTextProps } from './Type';
 import { RichTextItemType, RichTextComponent } from './Type';
 import {
@@ -21,6 +20,7 @@ import {
   createToggleMark,
   createToggleInline,
 } from './plugin-factory';
+import { ReactEditor } from 'slate-react';
 
 const useKeyBoardShortcut = (Component: RichTextComponent) => {
   const {
@@ -44,7 +44,7 @@ const useKeyBoardShortcut = (Component: RichTextComponent) => {
 
 type UseKeyBoardShortcuts = {
   components: RichTextProps['components'],
-  editor: Editor,
+  editor: ReactEditor,
 }
 
 export const useKeyBoardShortcuts = (props: UseKeyBoardShortcuts) => {

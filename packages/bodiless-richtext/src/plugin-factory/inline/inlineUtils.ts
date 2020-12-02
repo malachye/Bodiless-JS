@@ -60,7 +60,7 @@ export const wrapInline = (
   };
 
   if (isCollapsed) {
-    Transforms.insertNodes(editor, inlineNode)
+    Transforms.insertNodes(editor, inlineNode);
   } else {
     Transforms.wrapNodes(editor, inlineNode, { split: true })
     Transforms.collapse(editor, { edge: 'end' })

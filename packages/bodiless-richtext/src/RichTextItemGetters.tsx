@@ -29,6 +29,7 @@ import {
   hasBlock,
   hasInline,
   hasMark,
+  insertBlock,
   toggleBlock,
   toggleInline,
   toggleMark,
@@ -39,12 +40,13 @@ import {
   RichTextItemType,
   RichTextComponents,
   RichTextComponent,
+  RenderElementProps,
 } from './Type';
 import { useUI } from './RichTextContext';
 
 const SlateComponentProvider = (update: Function, type: string) => (
-  <P extends object, D extends object>(Component:ComponentType<P>) => (
-    (props: P) => {
+  <P extends object, D extends object>(Component:ComponentType<P & RenderElementProps>) => (
+    (props: P & RenderElementProps) => {
       const { element, ...rest } = props;
       const { node: bodilessNode } = useNode();
       const editor = useSlate();
@@ -54,7 +56,7 @@ const SlateComponentProvider = (update: Function, type: string) => (
       const lastSelection = useRef<Range>(null);
       if (selection !== null) lastSelection.current = selection;
       const getters = {
-        getNode: (path: string[]) => element.data[path.join('$')],
+        getNode: (path: string[]) => (element.data as any)[path.join('$')],
         getKeys: () => ['slatenode'],
         hasError: () => bodilessNode.hasError(),
         getPagePath: () => bodilessNode.pagePath,
@@ -64,7 +66,7 @@ const SlateComponentProvider = (update: Function, type: string) => (
         // tslint: disable-next-line:no-unused-vars
         setNode: (path: string[], componentData: any) => {
           const newData = {
-            ...element.data,
+            ...element.data as any,
             [path.join('$')]: { ...componentData },
           };
           return update({
@@ -120,7 +122,7 @@ const getRenderPlugin = <P extends object> (Component: RenderPluginComponent) =>
     withoutProps(['isFocused', 'isSelected']),
     // Remove Children if Void Component.
     withoutProps(isVoid ? ['children'] : []),
-  )(WrappedComponent as ComponentType<P & RenderNodeProps>);
+  )(WrappedComponent as ComponentType<P>);
   return creates({
     Component: CleanComponent,
     type: id,
@@ -167,7 +169,7 @@ const getGlobalButton = (Component: RichTextComponentWithGlobalButton) => (edito
   icon: Component.globalButton.icon,
   name: Component.id,
   global: true,
-  isActive: () => hasBlock(editor.value, Component.id),
+  isActive: () => hasBlock(Component.id, editor),
   handler: () => {
     const options = {
       editor,
