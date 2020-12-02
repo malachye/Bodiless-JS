@@ -48,7 +48,7 @@ type TUseNodeStateHandlers = (
 
 // Create the onChange prop.
 // @TODO Should be memoized with useCallback.
-const useOnChange: TUseOnChange = ({ onChange, key, initialValue }) => {
+const useOnChange: TUseOnChange = ({ onChange }) => {
   const { node } = useNode<Data>();
   const nodeData = toJS(node.data);
 

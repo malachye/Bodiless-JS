@@ -13,19 +13,23 @@
  */
 
 import React from 'react';
+import {
+  RenderLeafProps,
+  RenderElementProps,
+} from '../../Type';
 
-type Props<P> = {
-  Component: React.ComponentType<P>,
+type Props = {
+  Component: React.ComponentType<any>,
   type: string,
 };
 
-const createElementRenderPlugin = <P extends object> ({
+const createElementRenderPlugin = ({
   Component,
   type,
-}:Props<P>) => {
+}: Props) => {
   const plugin = {
     type,
-    renderElement: ({attributes, children, element}) => {
+    renderElement: ({attributes, children, element}: RenderElementProps) => {
       const { ref, ...restAttrs } = attributes;
       return <Component {...restAttrs} element={element} forwardRef={ref}>{children}</Component>;
     },
@@ -33,13 +37,13 @@ const createElementRenderPlugin = <P extends object> ({
   return plugin;
 };
 
-const createLeafRenderPlugin = <P extends object> ({
+const createLeafRenderPlugin = ({
   Component,
   type,
-}:Props<P>) => {
+}: Props) => {
   const plugin = {
     type,
-    renderLeaf: ({attributes, children}) => {
+    renderLeaf: ({ attributes, children }: RenderLeafProps) => {
       return <Component {...attributes}>{children}</Component>;
     },
   };

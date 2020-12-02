@@ -13,18 +13,18 @@
  */
 
 import { Editor, Transforms, Range } from 'slate';
-import { DataJSON, Value } from '../../Type';
+import { DataJSON } from '../../Type';
 
-// leveraging https://github.com/ianstormtaylor/slate/issues/3481#issuecomment-581670722
 const isInlineActive = (editor: Editor, format: string) => {
-  let match = false
-  for (const [node, paths] of Editor.nodes(editor, {
+  let match = false;
+  const nodes = Editor.nodes(editor, {
     match: n => n.type === format,
-  })) {
+  });
+  for (const [node] of nodes) {
     if (node.type === format) match = true
     break
   }
-  return !!match
+  return !!match;
 };
 
 export const createIsActive = (format: string) => (editor: Editor) => isInlineActive(editor, format);
@@ -69,13 +69,13 @@ export const wrapInline = (
 
 export type UpdateInlineOptions = {
   editor: Editor;
-  componentData: DataJSON;
-  node: Inline;
+  data: DataJSON;
+  type: string;
+  at: Range;
 };
 
 export type InsertInlineOptions = {
   editor: Editor;
-  value: Value;
   inlineType: string;
 };
 export type createToggleInlineOptions = {
@@ -103,7 +103,6 @@ export const updateInline = ({
 
 export const insertInline = ({
   editor,
-  value,
   inlineType,
 }: InsertInlineOptions) => {
 
@@ -129,7 +128,6 @@ export const toggleInline = ({
     insertInline({
       editor,
       inlineType,
-      value: {}
     });
   }
 };

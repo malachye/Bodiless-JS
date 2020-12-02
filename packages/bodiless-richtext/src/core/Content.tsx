@@ -12,10 +12,7 @@
  * limitations under the License.
  */
 
-import React, {
-  ComponentType,
-  PropsWithChildren,
-} from 'react';
+import React, { ComponentType } from 'react';
 import { Editable, DefaultElement, DefaultLeaf } from 'slate-react';
 import { useSlateContext } from './SlateEditorContext';
 import {
@@ -24,11 +21,10 @@ import {
   EditableProps,
 } from '../Type';
 
-const withWrapper = (
-  WrapperComponent: ComponentType,
-) => <P extends object>(
-  Component: ComponentType<PropsWithChildren<P>>,
-) => ({children, ...rest}: PropsWithChildren<P>) => (
+// ToDo: improve types
+const withWrapper =(WrapperComponent: ComponentType<any>) => (
+  Component: ComponentType<any>,
+) => ({children, ...rest}: any) => (
   <WrapperComponent {...rest}>
     <Component>{children}</Component>
   </WrapperComponent>

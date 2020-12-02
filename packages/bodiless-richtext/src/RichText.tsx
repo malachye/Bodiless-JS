@@ -22,15 +22,12 @@ import isEqual from 'react-fast-compare';
 import { flowRight, pick, flow, isEmpty } from 'lodash';
 import { createEditor, Editor, Element } from 'slate';
 import { Slate, withReact, useSlate } from 'slate-react';
-import type { Plugin } from 'slate-react';
-import type { SchemaProperties } from 'slate';
 import { observer } from 'mobx-react-lite';
 import {
   useEditContext,
   useContextActivator,
   withNode,
   withMenuOptions,
-  withoutProps,
   ifToggledOn,
   useUUID,
 } from '@bodiless/core';
@@ -89,7 +86,11 @@ import {
 import withDefaults from './withDefaults';
 import { withPreview } from './RichTextPreview';
 import withDataMigrator from './withDataMigrator';
-import type { RichTextProps, RichTextComponents } from './Type';
+import type {
+  RichTextProps,
+  RichTextComponents,
+  EditorContext,
+} from './Type';
 
 type WithSlateSchemaTypeProps = {
   schema: object,
@@ -139,9 +140,12 @@ const withSlateActivator = <P extends object>(Component: ComponentType<P>) => (p
     ...useContextActivator(),
   };
 
-  const slateContext = {
-    editorProps,
-    value: previousSlateContext!.value,
+  const slateContext: EditorContext = {
+    ...previousSlateContext!,
+    editorProps: {
+      ...previousSlateContext?.editorProps,
+      ...editorProps,
+    },
   };
   return (
     <SlateEditorContext.Provider value={slateContext}>

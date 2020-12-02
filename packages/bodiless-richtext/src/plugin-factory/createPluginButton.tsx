@@ -13,8 +13,9 @@
  */
 
 import React from 'react';
+import { Editor } from 'slate';
 import { useSlate } from 'slate-react';
-import { ToggleProps, Value } from '../Type';
+import { ToggleProps } from '../Type';
 import PluginButton from '../components/PluginButton';
 
 const defaultButton = {
@@ -30,7 +31,7 @@ type requiredProps = {
 };
 type Opts = {
   toggle(options: ToggleProps): void;
-  isActive(value: Value): boolean;
+  isActive(editor: Editor): boolean;
   icon: string;
 };
 

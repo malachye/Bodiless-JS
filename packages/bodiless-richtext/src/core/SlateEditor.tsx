@@ -43,7 +43,7 @@ const withSlateEditor = <P extends object> (Component:ComponentType<P>) => (prop
     plugins,
     onChange,
     editorProps: {
-      ...rest,
+      ...rest as EditableProps,
     },
   };
 
