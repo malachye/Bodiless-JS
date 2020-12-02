@@ -50,6 +50,7 @@ import {
   Design,
   DesignableComponents,
   withDisplayName,
+  Fragment,
 } from '@bodiless/fclasses';
 import { withHistory } from 'slate-history'
 import {
@@ -178,9 +179,8 @@ const RichTextProvider = flowRight(
     withMenuOptions({ useMenuOptions, name: 'editor' }),
     withSlateActivator,
   ),
-  withoutProps(['className', 'plugins', 'globalButtons', 'readOnly']),
   withSlateSchema,
-)(React.Fragment) as RichTextProviderType;
+)(Fragment) as RichTextProviderType;
 
 /**
  * @private
@@ -238,8 +238,6 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
 
   const initialValue$ = initialValue || [ ...defaultValue ];
   const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
-
-  console.log('========BasicRichText rendering========');
 
   return (
     <Slate editor={editor.current} value={value$} onChange={onChange}>
