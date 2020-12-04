@@ -60,10 +60,11 @@ function updateMenu(menu: HTMLElement | null, editor: ReactEditor) {
   const rect = domRange.getBoundingClientRect();
   const offsetLeft = rect.left + window.pageXOffset - menu.offsetWidth / 2 + rect.width / 2;
 
-  menu.style.opacity = '1';
-  menu.style.visibility = 'visible';
-  menu.style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`;
-  menu.style.left = `${offsetLeft < 0 ? 15 : offsetLeft}px`;
+  const { style } = menu;
+  style.opacity = '1';
+  style.visibility = 'visible';
+  style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`;
+  style.left = `${offsetLeft < 0 ? 15 : offsetLeft}px`;
 }
 
 export type HoverMenuProps = {

@@ -72,6 +72,7 @@ const migrateTextNode = (oldNode: Node) => {
 
 const migrateElementNode: NodeMapper = (node: Node) => {
   if (node.nodes === undefined) return node;
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const children = node.nodes.map(migrateNode);
   return {
     data: node.data ? node.data : {},

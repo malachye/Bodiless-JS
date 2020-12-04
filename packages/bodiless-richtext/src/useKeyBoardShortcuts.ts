@@ -47,7 +47,7 @@ type UseKeyBoardShortcuts = {
   editor: ReactEditor,
 };
 
-export const useKeyBoardShortcuts = (props: UseKeyBoardShortcuts) => {
+const useKeyBoardShortcuts = (props: UseKeyBoardShortcuts) => {
   const { editor, components } = props;
   const hotKeys = Object.values(components)
     // eslint-disable-next-line no-prototype-builtins
@@ -64,3 +64,5 @@ export const useKeyBoardShortcuts = (props: UseKeyBoardShortcuts) => {
     },
   };
 };
+
+export default useKeyBoardShortcuts;

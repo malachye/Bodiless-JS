@@ -20,6 +20,8 @@ const isInlineActive = (editor: Editor, format: string) => {
   const nodes = Editor.nodes(editor, {
     match: n => n.type === format,
   });
+  // ToDo: find a way how to solve the linting error and keep functionality working
+  // eslint-disable-next-line no-restricted-syntax
   for (const [node] of nodes) {
     if (node.type === format) match = true;
     break;
@@ -27,7 +29,9 @@ const isInlineActive = (editor: Editor, format: string) => {
   return !!match;
 };
 
-export const createIsActive = (format: string) => (editor: Editor) => isInlineActive(editor, format);
+export const createIsActive = (
+  format: string,
+) => (editor: Editor) => isInlineActive(editor, format);
 
 export const hasInline = (format: string, editor: Editor) => isInlineActive(editor, format);
 

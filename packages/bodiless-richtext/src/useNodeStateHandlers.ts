@@ -62,7 +62,7 @@ const useOnChange: TUseOnChange = ({ onChange }) => {
 };
 
 // Create the value prop (gets current editor value from state).
-const useValue: TUseValue = ({ initialValue, key }) => {
+const useValue: TUseValue = () => {
   const { node } = useNode<Data>();
   return toJS(node.data);
 };

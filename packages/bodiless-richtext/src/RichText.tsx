@@ -69,7 +69,7 @@ import {
   getSelectorButtons,
   getInlineButtons,
 } from './RichTextItemGetters';
-import { useKeyBoardShortcuts } from './useKeyBoardShortcuts';
+import useKeyBoardShortcuts from './useKeyBoardShortcuts';
 import TextSelectorButton from './components/TextSelectorButton';
 import { uiContext, getUI, UI } from './RichTextContext';
 import defaultValue from './default-value';
@@ -206,7 +206,10 @@ const withEditorSettings = (components: RichTextComponents) => (editor: Editor) 
   const { isInline } = editor;
   const inlineTypes = getInlineButtons(components)
     .map(Component => Component.id);
-  editor.isInline = (element: Element) => (inlineTypes.includes(element.type as string) ? true : isInline(element));
+  // eslint-disable-next-line no-param-reassign
+  editor.isInline = (
+    element: Element,
+  ) => (inlineTypes.includes(element.type as string) ? true : isInline(element));
   return editor;
 };
 
