@@ -22,14 +22,13 @@ import {
 } from '../Type';
 
 // ToDo: improve types
-const withWrapper =(WrapperComponent: ComponentType<any>) => (
+const withWrapper = (WrapperComponent: ComponentType<any>) => (
   Component: ComponentType<any>,
-) => ({children, ...rest}: any) => (
+) => ({ children, ...rest }: any) => (
   <WrapperComponent {...rest}>
     <Component>{children}</Component>
   </WrapperComponent>
 );
-
 
 const renderLeaf = (props: RenderLeafProps) => {
   const { leaf } = props;
@@ -41,10 +40,10 @@ const renderLeaf = (props: RenderLeafProps) => {
       if (plugin.renderLeaf !== undefined && leaf[plugin.type]) {
         renderLeaf$ = withWrapper(plugin.renderLeaf)(renderLeaf$);
       }
-    })
-  };
+    });
+  }
   return renderLeaf$(props);
-}
+};
 
 const renderElement = (props: RenderElementProps) => {
   const { element } = props;
@@ -56,19 +55,17 @@ const renderElement = (props: RenderElementProps) => {
       if (plugin.renderElement !== undefined && element.type === plugin.type) {
         renderElement$ = plugin.renderElement;
       }
-    })
-  };
+    });
+  }
   return renderElement$(props);
-}
-
-const Content = (props: EditableProps) => {
-  return (
-    <Editable
-      {...props}
-      renderLeaf={renderLeaf}
-      renderElement={renderElement}
-    />
-  );
 };
+
+const Content = (props: EditableProps) => (
+  <Editable
+    {...props}
+    renderLeaf={renderLeaf}
+    renderElement={renderElement}
+  />
+);
 
 export default Content;

@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-
 export default [
   {
     type: 'paragraph',
     children: [
-      { text: '' }
+      { text: '' },
     ],
   },
-]
+];

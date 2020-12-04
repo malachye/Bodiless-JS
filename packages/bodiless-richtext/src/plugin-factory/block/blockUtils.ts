@@ -21,11 +21,11 @@ const isBlockActive = (editor: Editor, format: string) => {
     match: n => n.type === format,
   });
   for (const [node] of nodes) {
-    if (node.type === format) match = true
-    break
+    if (node.type === format) match = true;
+    break;
   }
-  return !!match
-}
+  return !!match;
+};
 
 export const hasBlock = (format: string, editor: Editor) => isBlockActive(editor, format);
 
@@ -47,7 +47,6 @@ export type createToggleBlockOptions = {
   editor: Editor,
 };
 
-
 export const insertBlock = ({
   editor,
   blockType,
@@ -64,11 +63,11 @@ export const toggleBlock = ({
   editor,
   blockType,
 }: ToggleBlockOptions) => {
-  const isActive = isBlockActive(editor, blockType)
+  const isActive = isBlockActive(editor, blockType);
 
   Transforms.setNodes(editor, {
     type: isActive ? DEFAULT_NODE : blockType,
-  })
+  });
 };
 
 export const createToggleBlock = (blockType: string) => (

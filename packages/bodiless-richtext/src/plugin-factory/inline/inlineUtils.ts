@@ -21,8 +21,8 @@ const isInlineActive = (editor: Editor, format: string) => {
     match: n => n.type === format,
   });
   for (const [node] of nodes) {
-    if (node.type === format) match = true
-    break
+    if (node.type === format) match = true;
+    break;
   }
   return !!match;
 };
@@ -50,8 +50,8 @@ export const wrapInline = (
     removeInline(editor, inlineType);
   }
 
-  const { selection } = editor
-  const isCollapsed = selection && Range.isCollapsed(selection)
+  const { selection } = editor;
+  const isCollapsed = selection && Range.isCollapsed(selection);
 
   const inlineNode = {
     data,
@@ -62,8 +62,8 @@ export const wrapInline = (
   if (isCollapsed) {
     Transforms.insertNodes(editor, inlineNode);
   } else {
-    Transforms.wrapNodes(editor, inlineNode, { split: true })
-    Transforms.collapse(editor, { edge: 'end' })
+    Transforms.wrapNodes(editor, inlineNode, { split: true });
+    Transforms.collapse(editor, { edge: 'end' });
   }
 };
 
@@ -97,23 +97,22 @@ export const updateInline = ({
     {
       at: at || editor.selection,
       match: n => n.type === type,
-    }
-  )
+    },
+  );
 };
 
 export const insertInline = ({
   editor,
   inlineType,
 }: InsertInlineOptions) => {
-
   const { selection } = editor;
-  const isExpanded = selection && Range.isExpanded(selection)
+  const isExpanded = selection && Range.isExpanded(selection);
 
   if (hasInline(inlineType, editor)) {
     removeInline(editor, inlineType);
   } else if (isExpanded) {
     wrapInline(editor, inlineType, { openModal: true });
-  } 
+  }
 };
 
 export const toggleInline = ({

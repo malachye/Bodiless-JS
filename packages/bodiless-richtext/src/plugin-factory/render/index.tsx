@@ -29,7 +29,7 @@ const createElementRenderPlugin = ({
 }: Props) => {
   const plugin = {
     type,
-    renderElement: ({attributes, children, element}: RenderElementProps) => {
+    renderElement: ({ attributes, children, element }: RenderElementProps) => {
       const { ref, ...restAttrs } = attributes;
       return <Component {...restAttrs} element={element} forwardRef={ref}>{children}</Component>;
     },
@@ -43,12 +43,9 @@ const createLeafRenderPlugin = ({
 }: Props) => {
   const plugin = {
     type,
-    renderLeaf: ({ attributes, children }: RenderLeafProps) => {
-      return <Component {...attributes}>{children}</Component>;
-    },
+    renderLeaf: ({ attributes, children }: RenderLeafProps) => <Component {...attributes}>{children}</Component>,
   };
   return plugin;
 };
-
 
 export { createElementRenderPlugin, createLeafRenderPlugin };

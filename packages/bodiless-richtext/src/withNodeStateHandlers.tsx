@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import React, { ComponentType} from 'react';
+import React, { ComponentType } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useEditContext } from '@bodiless/core';
 import { ReactEditor } from 'slate-react';

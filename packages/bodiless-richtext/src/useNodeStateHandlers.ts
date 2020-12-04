@@ -14,7 +14,7 @@
 
 import { useCallback } from 'react';
 import { toJS } from 'mobx';
-//import { Value, ValueJSON } from 'slate';
+// import { Value, ValueJSON } from 'slate';
 import isEqual from 'react-fast-compare';
 import { useNode, useUUID } from '@bodiless/core';
 import {

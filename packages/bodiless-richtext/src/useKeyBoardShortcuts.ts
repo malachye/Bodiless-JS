@@ -12,7 +12,8 @@
  * limitations under the License.
  */
 
-import isHotkey from 'is-hotkey'
+import isHotkey from 'is-hotkey';
+import { ReactEditor } from 'slate-react';
 import type { RichTextProps } from './Type';
 import { RichTextItemType, RichTextComponent } from './Type';
 import {
@@ -20,7 +21,6 @@ import {
   createToggleMark,
   createToggleInline,
 } from './plugin-factory';
-import { ReactEditor } from 'slate-react';
 
 const useKeyBoardShortcut = (Component: RichTextComponent) => {
   const {
@@ -45,7 +45,7 @@ const useKeyBoardShortcut = (Component: RichTextComponent) => {
 type UseKeyBoardShortcuts = {
   components: RichTextProps['components'],
   editor: ReactEditor,
-}
+};
 
 export const useKeyBoardShortcuts = (props: UseKeyBoardShortcuts) => {
   const { editor, components } = props;
@@ -61,7 +61,6 @@ export const useKeyBoardShortcuts = (props: UseKeyBoardShortcuts) => {
           hotkey.toggle({ editor });
         }
       });
-    }
-  }
+    },
+  };
 };
-

@@ -17,7 +17,7 @@ import React,
   useEffect, ComponentType, HTMLProps,
 } from 'react';
 import ReactDOM from 'react-dom';
-import { Range, Editor } from 'slate'
+import { Range, Editor } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
 import { useEditContext } from '@bodiless/core';
 
@@ -45,12 +45,12 @@ function updateMenu(menu: HTMLElement | null, editor: ReactEditor) {
   }
 
   if (
-    !selection ||
-    !ReactEditor.isFocused(editor) ||
-    Range.isCollapsed(selection) ||
-    Editor.string(editor, selection) === ''
+    !selection
+    || !ReactEditor.isFocused(editor)
+    || Range.isCollapsed(selection)
+    || Editor.string(editor, selection) === ''
   ) {
-    menu.removeAttribute('style')
+    menu.removeAttribute('style');
     return;
   }
 
@@ -62,7 +62,7 @@ function updateMenu(menu: HTMLElement | null, editor: ReactEditor) {
 
   menu.style.opacity = '1';
   menu.style.visibility = 'visible';
-  menu.style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`
+  menu.style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`;
   menu.style.left = `${offsetLeft < 0 ? 15 : offsetLeft}px`;
 }
 

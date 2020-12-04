@@ -43,15 +43,14 @@ const removeLeaves: NodeReducer = (nodes: Node[]) => {
           object: 'text',
         })),
       ];
-    } else {
-      const cleanedNode = node.nodes
-        ? {
-            ...node,
-            nodes: removeLeaves(node.nodes),
-          }
-        : node;
-      return [...acc, cleanedNode];
     }
+    const cleanedNode = node.nodes
+      ? {
+        ...node,
+        nodes: removeLeaves(node.nodes),
+      }
+      : node;
+    return [...acc, cleanedNode];
   }, []);
 
   return cleanedNodes as Node[];
@@ -63,11 +62,11 @@ const migrateTextNode = (oldNode: Node) => {
       ...acc,
       [mark.type]: !isEmpty(mark.data) ? mark.data : true,
     }),
-    {}
+    {},
   ) : {};
   return {
     text: oldNode.text,
-    ...(marks ? marks : {}),
+    ...(marks || {}),
   } as Node;
 };
 
@@ -77,7 +76,7 @@ const migrateElementNode: NodeMapper = (node: Node) => {
   return {
     data: node.data ? node.data : {},
     type: node.type,
-    children: children ? children : [],
+    children: children || [],
   };
 };
 

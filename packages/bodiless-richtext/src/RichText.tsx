@@ -19,10 +19,14 @@ import React, {
   useRef,
 } from 'react';
 import isEqual from 'react-fast-compare';
-import { flowRight, pick, flow, isEmpty } from 'lodash';
+import {
+  flowRight, pick, flow, isEmpty,
+} from 'lodash';
 import { createEditor, Editor } from 'slate';
 import type { Element } from 'slate';
-import { Slate, withReact, useSlate, ReactEditor } from 'slate-react';
+import {
+  Slate, withReact, useSlate, ReactEditor,
+} from 'slate-react';
 import { observer } from 'mobx-react-lite';
 import {
   useEditContext,
@@ -50,7 +54,7 @@ import {
   withDisplayName,
   Fragment,
 } from '@bodiless/fclasses';
-import { withHistory } from 'slate-history'
+import { withHistory } from 'slate-history';
 import {
   withSlateEditor,
   Content,
@@ -202,10 +206,9 @@ const withEditorSettings = (components: RichTextComponents) => (editor: Editor) 
   const { isInline } = editor;
   const inlineTypes = getInlineButtons(components)
     .map(Component => Component.id);
-  editor.isInline = (element: Element) => inlineTypes.includes(element.type as string) ? true : isInline(element);
+  editor.isInline = (element: Element) => (inlineTypes.includes(element.type as string) ? true : isInline(element));
   return editor;
-}
-
+};
 
 const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) => {
   const {
@@ -236,10 +239,10 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
       withReact,
       withHistory,
       withEditorSettings(finalComponents),
-    )(createEditor()) as ReactEditor
+    )(createEditor()) as ReactEditor,
   );
 
-  const initialValue$ = initialValue || [ ...defaultValue ];
+  const initialValue$ = initialValue || [...defaultValue];
   const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
 
   return (
@@ -259,7 +262,7 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
               selectorButtons.length > 0
               && (
                 <TextSelectorButton>{selectorButtons}</TextSelectorButton>
-               )
+              )
             }
           </EditOnlyHoverMenu>
           <Content
@@ -267,7 +270,7 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
               editor: editor.current,
               components: finalComponents,
             })}
-            {...rest }
+            {...rest}
           />
         </RichTextProvider>
       </uiContext.Provider>
