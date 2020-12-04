@@ -15,11 +15,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mount } from 'enzyme';
-import {
-  Value as SlateEditorValue,
-  ValueJSON as SlateEditorValueJSON,
-} from 'slate';
-import { Editor } from 'slate-react';
+import type { Value as SlateEditorValue } from '../src/Type';
 
 const setEditMode = (isEdit: boolean) => {
   // @TODO bodiless-core internals should not be touched
@@ -33,7 +29,7 @@ import { PageEditContext } from '@bodiless/core';
 import defaultValue from '../src/default-value';
 
 const getDefaultRichTextItems = () => ({});
-const getRichTextInitialValue = () => ({});
+const getRichTextInitialValue = () => defaultValue;
 
 const setupPageEditContext = (isEdit: boolean): PageEditContext => {
   const pageEditContext = new PageEditContext();
@@ -60,11 +56,9 @@ describe('RichText', () => {
       const design = {};
       const RichText = createRichtext();
       const wrapper = mount(<RichText design={design} />);
-      const editor = wrapper.find('Editor');
+      const editor = wrapper.find('Slate');
       const valueProp = editor.prop('value') as unknown as SlateEditorValue;
-      // eslint-disable-next-line max-len
-      const defaultJSONValue = SlateEditorValue.fromJSON(defaultValue as SlateEditorValueJSON).toJSON();
-      expect(valueProp.toJSON()).toStrictEqual(defaultJSONValue);
+      expect(valueProp).toStrictEqual(defaultValue);
     });
   });
 
@@ -78,13 +72,13 @@ describe('RichText', () => {
           <RichText design={getDefaultRichTextItems()} initialValue={getRichTextInitialValue()} />
         </PageEditContext.Provider>,
       );
-      expect(wrapper.find('Editor').props().readOnly).toBe(false);
+      expect(wrapper.find('Editable').props().readOnly).toBe(false);
       expect(wrapper.find('HoverMenu').length).toBe(1);
       expect(wrapper.find('PageContextProvider').length).toBe(0);
 
       PageEditContext.prototype.activate = jest.fn();
       expect(PageEditContext.prototype.activate).toHaveBeenCalledTimes(0);
-      wrapper.find('Editor').simulate('click');
+      wrapper.find('Editable').simulate('click');
       expect(PageEditContext.prototype.activate).toHaveBeenCalledTimes(0);
     });
 
@@ -99,15 +93,12 @@ describe('RichText', () => {
         </PageEditContext.Provider>,
       );
 
-      expect(wrapper.find('Editor').props().readOnly).toBe(true);
+      expect(wrapper.find('Editable').props().readOnly).toBe(true);
       expect(wrapper.find('HoverMenu').length).toBe(0);
       expect(wrapper.find('PageContextProvider').length).toBe(0);
 
-      const editor = wrapper.find('Editor').instance() as Editor;
-      editor.props.onChange!({ operations: [] as any, value: SlateEditorValue.create() });
-
-      expect(wrapper.find('Editor').props().onClick).toBeUndefined();
-      wrapper.find('Editor').simulate('click');
+      expect(wrapper.find('Editable').props().onClick).toBeUndefined();
+      wrapper.find('Editable').simulate('click');
       expect(pageEditContext.activate).toHaveBeenCalledTimes(0);
     });
   });

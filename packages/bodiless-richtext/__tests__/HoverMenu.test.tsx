@@ -17,6 +17,13 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { PageEditContext } from '@bodiless/core';
 import HoverMenu, { HoverMenuProps } from '../src/core/HoverMenu';
+jest.mock('slate-react', () => ({
+  useSlate: () => ({
+    editor: {
+      selection: [],
+    },
+  }), 
+}));
 
 const setupPageEditContext = (isEdit: boolean): PageEditContext => {
   const pageEditContext = new PageEditContext();
@@ -45,7 +52,7 @@ describe('hover menu', () => {
       </PageEditContext.Provider>,
     );
 
-    const div = wrapper.find('div');
+    const div = wrapper.find('HoverMenu').find('div');
     const { className, id } = div.props();
     expect(id).toContain('hover-menu-');
     expect(className).toEqual(props.className);
