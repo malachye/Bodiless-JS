@@ -45,7 +45,7 @@ import type {
   DesignableComponents,
 } from './Design';
 import {
-  flowIf, hasProp, withoutProps, withOnlyProps,
+  flowIf, hasProp, withoutProps, withOnlyProps, replaceOnEffect,
   withDisplayName,
 } from './hoc-util';
 import Fragment from './Fragment';
@@ -64,6 +64,7 @@ export {
   withFinalDesign,
   applyDesign,
   replaceWith,
+  replaceOnEffect,
   startWith,
   remove,
   flowIf,

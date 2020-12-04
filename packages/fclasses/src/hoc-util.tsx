@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import React, { ComponentType, FC } from 'react';
+import React, { ComponentType, FC, useEffect, useState } from 'react';
 import { flow, omit, pick, mergeWith } from 'lodash';
 
 export type Condition<P> = (props: P) => boolean;
@@ -77,3 +77,23 @@ export const withDisplayName = <P extends Object> (name: string) => (Component: 
   const newMeta = mergeWith({}, Component, { displayName: name });
   return Object.assign(WithDisplayName, newMeta);
 };
+
+/**
+ * Like replaceWith, but performs the repacement on effect. Useful when you need to
+ * ensure that both versions of a component are rendered during SSR, but want to
+ * remove one when displayed in the browser (eg for responsive design).
+ *
+ * @param Replacement The component to replace with.
+ */
+export const replaceOnEffect = <P extends object>(
+  Replacement: ComponentType<P>,
+) => (
+    Component: ComponentType<P>,
+  ) => {
+    const ReplaceOnEffect = (props: P) => {
+      const [replaced, setReplaced] = useState(false);
+      useEffect(() => setReplaced(true), []);
+      return replaced ? <Replacement {...props} /> : <Component {...props} />;
+    };
+    return ReplaceOnEffect;
+  };
