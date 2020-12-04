@@ -14,7 +14,7 @@
 
 import React, { useRef, ComponentType } from 'react';
 import { Editor } from 'slate';
-
+import type { Range } from 'slate';
 import {
   NodeProvider, DefaultContentNode, withoutProps, useNode,
 } from '@bodiless/core';
@@ -47,13 +47,13 @@ import { useUI } from './RichTextContext';
 const SlateComponentProvider = (update: Function, type: string) => (
   <P extends object, D extends object>(Component:ComponentType<P & RenderElementProps>) => (
     (props: P & RenderElementProps) => {
-      const { element, ...rest } = props;
+      const { element } = props;
       const { node: bodilessNode } = useNode();
       const editor = useSlate();
       const { selection } = editor;
       // when the editor looses focus and selection becomes null
       // see https://github.com/ianstormtaylor/slate/issues/3412
-      const lastSelection = useRef<Range>(null);
+      const lastSelection = useRef<Range | null>(null);
       if (selection !== null) lastSelection.current = selection;
       const getters = {
         getNode: (path: string[]) => (element.data as any)[path.join('$')],
@@ -63,7 +63,6 @@ const SlateComponentProvider = (update: Function, type: string) => (
         getBaseResourcePath: () => bodilessNode.baseResourcePath,
       };
       const actions = {
-        // tslint: disable-next-line:no-unused-vars
         setNode: (path: string[], componentData: any) => {
           const newData = {
             ...element.data as any,
@@ -81,7 +80,7 @@ const SlateComponentProvider = (update: Function, type: string) => (
       const contentNode = new DefaultContentNode(actions, getters, 'slatenode');
       return (
         <NodeProvider node={contentNode}>
-          <Component {...rest} />
+          <Component {...props} />
         </NodeProvider>
       );
     }
@@ -119,7 +118,7 @@ const getRenderPlugin = <P extends object> (Component: RenderPluginComponent) =>
   }[type];
   // Clean up th component to add Attributes and remove unused props.
   const CleanComponent = flow(
-    withoutProps(['isFocused', 'isSelected']),
+    withoutProps(['isFocused', 'isSelected', 'element']),
     // Remove Children if Void Component.
     withoutProps(isVoid ? ['children'] : []),
   )(WrappedComponent as ComponentType<P>);
@@ -184,26 +183,7 @@ const getGlobalButton = (Component: RichTextComponentWithGlobalButton) => (edito
   },
 });
 
-const getSchema = <D extends object>(components: RichTextComponents) => (
-  Object.values(components).filter(Component => Component.isVoid)
-    .reduce(
-      (previous:SchemaProperties, Component) => {
-        const next = { ...previous };
-        const type = Component.type === RichTextItemType.block ? 'blocks' : 'inlines';
-        if (!(type in next)) {
-          next[type] = {};
-        }
-        if (!(Component.id in next[type]!)) {
-          next[type]![Component.id] = {};
-        }
-        next[type]![Component.id].isVoid = true;
-        return next;
-      },
-      {},
-    )
-);
 type getSelectorButtonToggleType = {
-  value: Value,
   editor: Editor,
   name: string,
 };
@@ -217,14 +197,14 @@ type getSelectorButtonToggleMarkType = {
 const getSelectorButton = <P extends object> (Component: RichTextComponent) => (props:P) => {
   const { toggleFuc, has } = {
     [RichTextItemType.block]: {
-      toggleFuc: ({ value, editor, name }:getSelectorButtonToggleType) => (
-        toggleBlock({ value, editor, blockType: name })
+      toggleFuc: ({ editor, name }: getSelectorButtonToggleType) => (
+        toggleBlock({ editor, blockType: name })
       ),
       has: hasBlock,
     },
     [RichTextItemType.inline]: {
-      toggleFuc: ({ value, editor, name }:getSelectorButtonToggleType) => (
-        toggleInline({ value, editor, inlineType: name })
+      toggleFuc: ({ editor, name }: getSelectorButtonToggleType) => (
+        toggleInline({ editor, inlineType: name })
       ),
       has: hasInline,
     },
@@ -237,10 +217,10 @@ const getSelectorButton = <P extends object> (Component: RichTextComponent) => (
   }[Component.type];
   const { ClickableWrapper } = useUI();
   const Button:ComponentType = withToggle({
-    toggle: ({ value, editor }) => {
-      toggleFuc({ value, editor, name: Component.id });
+    toggle: ({ editor }) => {
+      toggleFuc({ editor, name: Component.id });
     },
-    isActive: value => has(value, Component.id),
+    isActive: (editor) => has(Component.id, editor),
     icon: 'none',
   })(ClickableWrapper);
   return <Button><Component {...props}>{ Component.id }</Component></Button>;
@@ -279,6 +259,5 @@ export {
   getSelectorButtons,
   getHoverButtons,
   getGlobalButtons,
-  getSchema,
   getInlineButtons,
 };

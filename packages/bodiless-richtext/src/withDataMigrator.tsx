@@ -15,16 +15,30 @@
 import React from 'react';
 import { isEmpty } from 'lodash';
 
-const removeLeaves = nodes => {
+type Node = {
+  type: string,
+  leaves?: Node[],
+  marks?: Node[],
+  nodes?: Node[],
+  object?: string,
+  text?: string,
+  data?: object,
+  children?: any,
+};
+
+type NodeMapper = (node: Node) => Node;
+type NodeReducer = (nodes: Node[]) => Node[];
+
+const removeLeaves: NodeReducer = (nodes: Node[]) => {
   if (!nodes) {
     return [];
   }
-  const cleanedNodes = nodes.reduce((acc, node) => {
+  const cleanedNodes = nodes.reduce((acc: Node[], node: Node) => {
     if (node.leaves) {
       // we don't need the node itself, as we exepct it to be a text node
       return [
         ...acc,
-        ...node.leaves.map((leave) => ({
+        ...(node.leaves).map((leave) => ({
           ...leave,
           object: 'text',
         })),
@@ -40,10 +54,10 @@ const removeLeaves = nodes => {
     }
   }, []);
 
-  return cleanedNodes;
+  return cleanedNodes as Node[];
 };
 
-const migrateTextNode = (oldNode) => {
+const migrateTextNode = (oldNode: Node) => {
   const marks = oldNode.marks !== undefined ? oldNode.marks.reduce(
     (acc, mark) => ({
       ...acc,
@@ -54,10 +68,11 @@ const migrateTextNode = (oldNode) => {
   return {
     text: oldNode.text,
     ...(marks ? marks : {}),
-  };
+  } as Node;
 };
 
-const migrateElementNode = (node) => {
+const migrateElementNode: NodeMapper = (node: Node) => {
+  if (node.nodes === undefined) return node;
   const children = node.nodes.map(migrateNode);
   return {
     data: node.data ? node.data : {},
@@ -65,12 +80,12 @@ const migrateElementNode = (node) => {
     children: children ? children : [],
   };
 };
-const migrateNode = (oldNode) => {
+
+const migrateNode = (oldNode: Node) => {
   if (oldNode.object === 'text') {
     return migrateTextNode(oldNode);
-  } else {
-    return migrateElementNode(oldNode);
   }
+  return migrateElementNode(oldNode);
 };
 
 const withDataMigrator = (Component: any) => (

@@ -13,8 +13,7 @@
  */
 
 import { ComponentType } from 'react';
-import { Node, Editor, Operation } from 'slate';
-import Immutable from 'immutable';
+import { Node, Editor } from 'slate';
 import type {
   EditableProps,
   RenderLeafProps,
@@ -42,7 +41,7 @@ export type Value = Node[];
 
 export type NodeEditForm = ComponentType<FormProps>;
 
-export type EditorOnChange = (value: Node[]) => void;
+export type EditorOnChange = (value: Value) => void;
 
 export type EditorContext = {
   value: Value,
@@ -65,11 +64,6 @@ export type CustomComponentProps = {
   setComponentData(Data: DataJSON): void;
   unwrap(): void;
   children: any;
-};
-
-export type Change = {
-  operations: Immutable.List<Operation>;
-  value: Value;
 };
 
 export type RichTextComponent = ComponentType<any> & {

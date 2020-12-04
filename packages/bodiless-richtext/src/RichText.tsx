@@ -62,7 +62,6 @@ import {
   getPlugins,
   getHoverButtons,
   getGlobalButtons,
-  getSchema,
   getSelectorButtons,
   getInlineButtons,
 } from './RichTextItemGetters';
@@ -203,7 +202,7 @@ const withEditorSettings = (components: RichTextComponents) => (editor: Editor) 
   const { isInline } = editor;
   const inlineTypes = getInlineButtons(components)
     .map(Component => Component.id);
-  editor.isInline = (element: Element) => inlineTypes.includes(element.type) ? true : isInline(element);
+  editor.isInline = (element: Element) => inlineTypes.includes(element.type as string) ? true : isInline(element);
   return editor;
 }
 
@@ -219,13 +218,12 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
   } = props;
 
   const {
-    finalComponents, plugins, schema, globalButtons,
+    finalComponents, plugins, globalButtons,
   } = useMemo(() => {
     const finalComponents$ = withDefaults(components);
     return {
       finalComponents: finalComponents$,
       plugins: getPlugins(finalComponents$),
-      schema: getSchema(finalComponents$),
       globalButtons: getGlobalButtons(finalComponents$),
     };
   }, [components]);
@@ -252,7 +250,6 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
           initialValue={initialValue$}
           plugins={plugins}
           globalButtons={globalButtons}
-          schema={schema}
         >
           <EditOnlyHoverMenu HoverMenu={HoverMenu}>
             {
@@ -267,7 +264,7 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
           </EditOnlyHoverMenu>
           <Content
             {...useKeyBoardShortcuts({
-              editor,
+              editor: editor.current,
               components: finalComponents,
             })}
             {...rest }

@@ -119,7 +119,7 @@ export const insertInline = ({
 export const toggleInline = ({
   editor,
   inlineType,
-}: any) => {
+}: InsertInlineOptions) => {
   const isActive = isInlineActive(editor, inlineType);
 
   if (isActive) {

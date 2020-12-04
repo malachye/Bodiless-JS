@@ -17,22 +17,20 @@ import { toJS } from 'mobx';
 //import { Value, ValueJSON } from 'slate';
 import isEqual from 'react-fast-compare';
 import { useNode, useUUID } from '@bodiless/core';
-import { Change } from './Type';
+import {
+  EditorOnChange,
+  Value,
+} from './Type';
 
-type Data = {
-  document: object;
-};
+type Data = Value;
 
-type ValueJSON = object;
-type Value = object;
-type InitialValue = ValueJSON;
-type TOnChange = Function; // (change: Change) => void;
+type InitialValue = Data;
 type TUseOnChangeParams = {
-  onChange?: TOnChange;
+  onChange?: EditorOnChange;
   key: string;
   initialValue: InitialValue;
 };
-type TUseOnChange = (params: TUseOnChangeParams) => (change: Change) => void;
+type TUseOnChange = (params: TUseOnChangeParams) => (change: Value) => void;
 type TUseValueParam = {
   initialValue: InitialValue;
   key: string;
@@ -43,7 +41,7 @@ type TUseNodeStateHandlers = (
   params: TUseNodeStateHandlersParams,
 ) => {
   value: Value;
-  onChange: TOnChange;
+  onChange: EditorOnChange;
 };
 
 // Create the onChange prop.
@@ -54,7 +52,7 @@ const useOnChange: TUseOnChange = ({ onChange }) => {
 
   return useCallback(value => {
     if (onChange) {
-      onChange(change);
+      onChange(value);
     }
     // ToDo: ensure previous logic including saving initial value is not lost
     if (!isEqual(value, nodeData)) {

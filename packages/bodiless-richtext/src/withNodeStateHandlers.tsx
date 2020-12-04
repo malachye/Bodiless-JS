@@ -12,30 +12,29 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { ComponentType} from 'react';
 import { observer } from 'mobx-react-lite';
-import { EditorProps } from 'slate-react';
-import { Value } from 'slate';
 import { useEditContext } from '@bodiless/core';
+import { ReactEditor } from 'slate-react';
 import useNodeStateHandlers from './useNodeStateHandlers';
+import type {
+  Value,
+  EditorOnChange,
+} from './Type';
 
-export interface SlateEditorProps extends EditorProps {
-  children?: any;
-  initialValue: object;
-}
-
-type NodeStateHandlers = {
-  onChange: Function; // (change: Change) => void;
+type SlateEditorProps = {
+  editor: ReactEditor;
   value: Value;
+  children: React.ReactNode;
+  onChange: EditorOnChange;
 };
 
-export type Props = Pick<
-SlateEditorProps,
-Exclude<keyof SlateEditorProps, 'value'>
->;
+type NodeStateHandlers = Pick<SlateEditorProps, 'value' | 'onChange'>;
 
-const withNodeStateHandlers = (Editor: React.FC<SlateEditorProps>) => (
-  observer(({ value: originalValue, onChange: originalOnChange, ...rest }: Props) => {
+export type Props = Pick<SlateEditorProps, 'value' | 'onChange'>;
+
+const withNodeStateHandlers = (Editor: ComponentType<SlateEditorProps>) => (
+  observer(({ value: originalValue, onChange: originalOnChange, ...rest }: SlateEditorProps) => {
     const { value, onChange }: NodeStateHandlers = useNodeStateHandlers({
       initialValue: originalValue,
       onChange: originalOnChange,
