@@ -17,12 +17,13 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { PageEditContext } from '@bodiless/core';
 import HoverMenu, { HoverMenuProps } from '../src/core/HoverMenu';
+
 jest.mock('slate-react', () => ({
   useSlate: () => ({
     editor: {
       selection: [],
     },
-  }), 
+  }),
 }));
 
 const setupPageEditContext = (isEdit: boolean): PageEditContext => {

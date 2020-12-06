@@ -118,7 +118,7 @@ const getRenderPlugin = <P extends object> (Component: RenderPluginComponent) =>
   }[type];
   // Clean up th component to add Attributes and remove unused props.
   const CleanComponent = flow(
-    withoutProps(['isFocused', 'isSelected', 'element']),
+    withoutProps(['isFocused', 'isSelected']),
     // Remove Children if Void Component.
     withoutProps(isVoid ? ['children'] : []),
   )(WrappedComponent as ComponentType<P>);

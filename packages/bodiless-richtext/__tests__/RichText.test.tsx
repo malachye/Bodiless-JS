@@ -15,6 +15,8 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mount } from 'enzyme';
+import { PageEditContext } from '@bodiless/core';
+import defaultValue from '../src/default-value';
 import type { Value as SlateEditorValue } from '../src/Type';
 
 const setEditMode = (isEdit: boolean) => {
@@ -23,10 +25,6 @@ const setEditMode = (isEdit: boolean) => {
   window.sessionStorage.isEdit = isEdit;
 };
 setEditMode(true);
-// eslint-disable-next-line import/first
-import { PageEditContext } from '@bodiless/core';
-// eslint-disable-next-line import/first
-import defaultValue from '../src/default-value';
 
 const getDefaultRichTextItems = () => ({});
 const getRichTextInitialValue = () => defaultValue;

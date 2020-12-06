@@ -13,18 +13,17 @@
  */
 
 import React, { ComponentType } from 'react';
-import Plain from 'slate-plain-serializer';
 import { flowRight } from 'lodash';
 import { useNode, withNode } from '@bodiless/core';
+import { Node } from 'slate';
+import type { Value } from './Type';
 
-type Data = {
-  document: object;
-};
+const serialize = (nodes: Node[]) => nodes.map(n => Node.string(n)).join('\n');
 
 const useRichtextPlainSerializer = () => {
-  const { node } = useNode<Data>();
+  const { node } = useNode<Value>();
   const value = node.data;
-  return value ? Plain.serialize(value) : '';
+  return value ? serialize(value) : '';
 };
 
 const withRichtextPlainSerializer$ = (Component: ComponentType) => {
