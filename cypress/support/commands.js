@@ -103,3 +103,26 @@ Cypress.Commands.add("hideContextMenu", () => {
   cy.xpath('//h1')
     .click()
 })
+
+
+//slate commands
+Cypress.Commands.add('getEditor', (selector) => {
+  return cy.xpath(selector)
+    .click()
+})
+
+Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
+  return cy.wrap(subject)
+    .then(subject => {
+      subject[0].dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: text }));
+      return subject;
+    })
+})
+ 
+Cypress.Commands.add('clearInSlate', { prevSubject: true }, (subject) => {
+  return cy.wrap(subject)
+    .then(subject => {
+      subject[0].dispatchEvent(new InputEvent('beforeinput', { inputType: 'deleteHardLineBackward' }))
+      return subject;
+    })
+})

@@ -13,6 +13,8 @@
  */
 
 import React, { ComponentType } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useEditContext } from '@bodiless/core';
 import { Editable, DefaultElement, DefaultLeaf } from 'slate-react';
 import { useSlateContext } from './SlateEditorContext';
 import {
@@ -60,12 +62,16 @@ const renderElement = (props: RenderElementProps) => {
   return renderElement$(props);
 };
 
-const Content = (props: EditableProps) => (
-  <Editable
-    {...props}
-    renderLeaf={renderLeaf}
-    renderElement={renderElement}
-  />
-);
+const Content = observer((props: EditableProps) => {
+  const { isEdit } = useEditContext();
+  return (
+    <Editable
+      {...props}
+      renderLeaf={renderLeaf}
+      renderElement={renderElement}
+      readOnly={!isEdit}
+    />
+  );
+});
 
 export default Content;

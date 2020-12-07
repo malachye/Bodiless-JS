@@ -14,7 +14,6 @@
 
 import React, { ComponentType } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useEditContext } from '@bodiless/core';
 import { ReactEditor } from 'slate-react';
 import useNodeStateHandlers from './useNodeStateHandlers';
 import type {
@@ -39,12 +38,10 @@ const withNodeStateHandlers = (Editor: ComponentType<SlateEditorProps>) => (
       initialValue: originalValue,
       onChange: originalOnChange,
     });
-    const { isEdit } = useEditContext();
     const finalEditorProps = {
       ...rest,
       value,
       onChange,
-      readOnly: !isEdit,
     } as SlateEditorProps;
 
     return <Editor {...finalEditorProps} />;
