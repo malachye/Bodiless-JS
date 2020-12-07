@@ -105,6 +105,8 @@ Cypress.Commands.add("hideContextMenu", () => {
 })
 
 
+const sleeper = ms => x => new Promise(resolve => setTimeout(() => resolve(x), ms));
+
 //slate commands
 Cypress.Commands.add('getEditor', (selector) => {
   return cy.xpath(selector)
@@ -117,6 +119,7 @@ Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
       subject[0].dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: text }));
       return subject;
     })
+    .then(sleeper(500))
 })
  
 Cypress.Commands.add('clearInSlate', { prevSubject: true }, (subject) => {
