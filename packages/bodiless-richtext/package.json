@@ -44,9 +44,9 @@
     "react-fast-compare": "^2.0.4",
     "shelljs": "^0.8.4",
     "slate": "^0.59.0",
-    "slate-plain-serializer": "^0.7.13",
     "slate-history": "^0.59.0",
     "slate-react": "^0.59.0",
+    "slate-hyperscript": "^0.59.0",
     "uuid": "^3.3.2"
   },
   "peerDependencies": {

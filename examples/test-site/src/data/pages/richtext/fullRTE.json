@@ -1,0 +1,48 @@
+[
+  {
+    "type": "paragraph",
+    "children": [
+      {
+        "text": ""
+      },
+      {
+        "type": "Link",
+        "data": {
+          "slatenode": {
+            "href": "https://www.speedtest.net/ookla-5g-map"
+          }
+        },
+        "children": [
+          {
+            "text": "Ookla 5G Map"
+          }
+        ]
+      },
+      {
+        "text": ""
+      },
+      {
+        "type": "Link",
+        "data": {
+          "href": "https://www.speedtest.net/ookla-5g-map"
+        },
+        "children": [
+          {
+            "text": ""
+          }
+        ]
+      },
+      {
+        "text": ""
+      }
+    ]
+  },
+  {
+    "type": "paragraph",
+    "children": [
+      {
+        "text": ""
+      }
+    ]
+  }
+]
