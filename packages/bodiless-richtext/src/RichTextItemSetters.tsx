@@ -17,6 +17,10 @@ import { mergeWith, isArray } from 'lodash';
 import {
   RichTextItemType,
 } from './Type';
+import type {
+  HTMLElementMapper,
+  HTMLElementToSlateNodeMapper,
+} from './plugin-factory/deserializer';
 
 function customizer(objValue:any, srcValue:any) {
   if (isArray(objValue)) {
@@ -102,6 +106,22 @@ const withHoverButton = (icon:string) => (
 */
 const withButton = (icon:string) => withHoverButton(icon);
 
+
+/**
+ * maps RichTextItem into HtmlElement
+ */
+const withHtmlElement = (mapper: HTMLElementMapper) => withMeta({
+  htmlElement: mapper,
+});
+
+
+/**
+ * maps RichTextItem into HtmlElement
+ */
+const withHtmlElementToSlateNodeMapper = (mapper: HTMLElementToSlateNodeMapper) => withMeta({
+  htmlElementToNode: mapper,
+});
+
 export {
   withComponent,
   asBlock,
@@ -114,4 +134,6 @@ export {
   withButton,
   withGlobalButton,
   withHoverButton,
+  withHtmlElement,
+  withHtmlElementToSlateNodeMapper,
 };

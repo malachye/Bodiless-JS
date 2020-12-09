@@ -12,57 +12,59 @@
  * limitations under the License.
  */
 
-import { Transforms } from 'slate'
+import { Transforms } from 'slate';
+import { ReactEditor } from 'slate-react';
 import { jsx } from 'slate-hyperscript';
+import { getDeserializers } from './RichTextItemGetters';
+import type { RichTextComponents } from './Type';
 
-const ELEMENT_TAGS = {
-  A: el => ({ type: 'Link', data: { slatenode: { href: el.getAttribute('href') } } }),
-  H1: () => ({ type: 'H1' }),
-};
 
-export const deserialize = el => {
-  if (el.nodeType === 3) {
-    return el.textContent
-  } else if (el.nodeType !== 1) {
-    return null
+export const deserialize = (element: HTMLElement, deserializers: Deserializer[]) => {
+  if (element.nodeType === 3) {
+    return element.textContent
+  } else if (element.nodeType !== 1) {
+    return null;
   }
 
-  const { nodeName } = el
-  let parent = el
+  console.log(element.nodeName);
+
+  let parent = element;
 
   const children = Array.from(parent.childNodes)
-    .map(deserialize)
+    .map((element$: HTMLElement) => deserialize(element$, deserializers))
     .flat()
 
-  if (el.nodeName === 'BODY') {
+  if (element.nodeName === 'BODY') {
     return jsx('fragment', {}, children)
   }
 
-  if (ELEMENT_TAGS[nodeName]) {
-    const attrs = ELEMENT_TAGS[nodeName](el)
-    return jsx('element', attrs, children)
+  const deserializer = deserializers.find(deserializer => deserializer.htmlElementMapper(element));
+  if (deserializer) {
+    return jsx('element', deserializer.htmlElementToNode(element), children);
   }
   
   return children
 }
 
-const withHtmlPaste = editor => {
-  const { insertData } = editor
+const withHtmlPaste = (components: RichTextComponents) => (editor: ReactEditor) => {
+  const { insertData } = editor;
 
-  editor.insertData = data => {
+  const deserializers = getDeserializers(components);
+  
+  editor.insertData = (data: DataTransfer) => {
     const html = data.getData('text/html')
 
     if (html) {
-      const parsed = new DOMParser().parseFromString(html, 'text/html')
-      const fragment = deserialize(parsed.body)
-      Transforms.insertFragment(editor, fragment)
-      return
+      const parsed = new DOMParser().parseFromString(html, 'text/html');
+      const fragment = deserialize(parsed.body, deserializers);
+      Transforms.insertFragment(editor, fragment);
+      return;
     }
 
-    insertData(data)
+    insertData(data);
   }
 
-  return editor
+  return editor;
 }
 
 export default withHtmlPaste;

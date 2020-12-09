@@ -16,4 +16,5 @@ export * from './inline';
 export * from './mark';
 export * from './block';
 export * from './render';
+export * from './deserializer';
 export { default as createPluginButton, withToggle } from './createPluginButton';

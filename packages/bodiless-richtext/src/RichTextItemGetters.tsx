@@ -26,6 +26,7 @@ import {
   createMarkButton,
   createElementRenderPlugin,
   createLeafRenderPlugin,
+  createDeserializerPlugin,
   hasBlock,
   hasInline,
   hasMark,
@@ -253,10 +254,18 @@ const getGlobalButtons = (components: RichTextComponents) => {
   );
 };
 
+const getDeserializers = (components: RichTextComponents) => {
+  return Object.values(components)
+    // eslint-disable-next-line no-prototype-builtins
+    .filter(Component => Component.hasOwnProperty('htmlElement'))
+    .map(Component => createDeserializerPlugin({ Component }));
+}
+
 export {
   getPlugins,
   getSelectorButtons,
   getHoverButtons,
   getGlobalButtons,
   getInlineButtons,
+  getDeserializers,
 };

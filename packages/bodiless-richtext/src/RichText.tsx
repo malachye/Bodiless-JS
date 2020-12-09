@@ -68,6 +68,7 @@ import {
   getGlobalButtons,
   getSelectorButtons,
   getInlineButtons,
+  getDeserializers,
 } from './RichTextItemGetters';
 import useKeyBoardShortcuts from './useKeyBoardShortcuts';
 import TextSelectorButton from './components/TextSelectorButton';
@@ -232,6 +233,7 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
       finalComponents: finalComponents$,
       plugins: getPlugins(finalComponents$),
       globalButtons: getGlobalButtons(finalComponents$),
+      deserializers: getDeserializers(finalComponents$),
     };
   }, [components]);
   const { HoverMenu } = getUI(ui);
@@ -243,7 +245,7 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
       withReact,
       withHistory,
       withEditorSettings(finalComponents),
-      withHtmlPaste,
+      withHtmlPaste(finalComponents),
     )(createEditor()) as ReactEditor,
   );
 
