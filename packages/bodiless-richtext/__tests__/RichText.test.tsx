@@ -49,6 +49,13 @@ describe('RichText', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+  describe('by default', () => {
+    it('produces markup that matches defined snapshot', () => {
+      const RichText = createRichtext();
+      const wrapper = mount(<RichText />);
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+  });
   describe('when value prop is not passed', () => {
     it('passes default value to ReactEditor', () => {
       const design = {};
@@ -57,6 +64,32 @@ describe('RichText', () => {
       const editor = wrapper.find('Slate');
       const valueProp = editor.prop('value') as unknown as SlateEditorValue;
       expect(valueProp).toStrictEqual(defaultValue);
+    });
+    describe('when in edit mode', () => {
+      it('adds width to slate wrapper', () => {
+        const RichText = createRichtext();
+        const pageEditContext = setupPageEditContext(true);
+        const wrapper = mount(
+          <PageEditContext.Provider value={pageEditContext}>
+            <RichText />
+          </PageEditContext.Provider>,
+        );
+        // it will render hover menu empty div
+        // @todo: consider do not render it when there are not hover menu buttons
+        expect(wrapper.html()).toMatchSnapshot();
+      });
+      it('allows to override default wrapper styles', () => {
+        const RichText = createRichtext();
+        const pageEditContext = setupPageEditContext(true);
+        const wrapper = mount(
+          <PageEditContext.Provider value={pageEditContext}>
+            <RichText style={{ minWidth: '80px' }} />
+          </PageEditContext.Provider>,
+        );
+        // it will render hover menu empty div
+        // @todo: consider do not render it when there are not hover menu buttons
+        expect(wrapper.html()).toMatchSnapshot();
+      });
     });
   });
 
