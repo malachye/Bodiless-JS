@@ -105,9 +105,9 @@ Cypress.Commands.add("hideContextMenu", () => {
 })
 
 
-const sleeper = ms => x => new Promise(resolve => setTimeout(() => resolve(x), ms));
+const sleep = ms => x => new Promise(resolve => setTimeout(() => resolve(x), ms));
 
-//slate commands
+// slate js commands suggested in https://github.com/ianstormtaylor/slate/issues/3476#issuecomment-617594068
 Cypress.Commands.add('getEditor', (selector) => {
   return cy.xpath(selector)
     .click()
@@ -119,7 +119,12 @@ Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
       subject[0].dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: text }));
       return subject;
     })
-    .then(sleeper(500))
+    // a race condition identified
+    // cypress assertion is made before the inserted text is available
+    // which led to sporadically failing cypress tests
+    // having added the timeout, mitigated this problem
+    // @todo find a better solution for the problem with race condition
+    .then(sleep(500))
 })
  
 Cypress.Commands.add('clearInSlate', { prevSubject: true }, (subject) => {
