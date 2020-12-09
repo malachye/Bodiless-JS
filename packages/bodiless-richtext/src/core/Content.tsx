@@ -14,13 +14,24 @@
 
 import React, { ComponentType } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useEditContext } from '@bodiless/core';
-import { Editable, DefaultElement, DefaultLeaf } from 'slate-react';
+import {
+  ifReadOnly,
+  ifEditable,
+  useEditToggle,
+  ifToggledOn,
+} from '@bodiless/core';
+import { addProps } from '@bodiless/fclasses';
+import {
+  Editable,
+  DefaultElement,
+  DefaultLeaf,
+} from 'slate-react';
+import { flow } from 'lodash';
 import { useSlateContext } from './SlateEditorContext';
+import { useIsNodeValueEmpty } from '../useNodeStateHandlers';
 import {
   RenderLeafProps,
   RenderElementProps,
-  EditableProps,
 } from '../Type';
 
 // ToDo: improve types
@@ -62,16 +73,31 @@ const renderElement = (props: RenderElementProps) => {
   return renderElement$(props);
 };
 
-const Content = observer((props: EditableProps) => {
-  const { isEdit } = useEditContext();
-  return (
-    <Editable
-      {...props}
-      renderLeaf={renderLeaf}
-      renderElement={renderElement}
-      readOnly={!isEdit}
-    />
-  );
-});
+const useIsEditableAndEmpty = () => useEditToggle() && useIsNodeValueEmpty();
+
+const Content = flow(
+  ifToggledOn(useIsEditableAndEmpty)(
+    addProps({
+      style: {
+        minWidth: '100px',
+      },
+    }),
+  ),
+  ifEditable(
+    addProps({
+      readOnly: false,
+    }),
+  ),
+  ifReadOnly(
+    addProps({
+      readOnly: true,
+    }),
+  ),
+  addProps({
+    renderLeaf,
+    renderElement,
+  }),
+  observer,
+)(Editable);
 
 export default Content;
