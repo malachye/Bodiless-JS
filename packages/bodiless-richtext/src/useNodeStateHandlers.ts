@@ -16,7 +16,6 @@ import { useCallback } from 'react';
 import { toJS } from 'mobx';
 import isEqual from 'react-fast-compare';
 import { useNode, useUUID } from '@bodiless/core';
-import { isEmpty } from 'lodash';
 import {
   EditorOnChange,
   Value,
@@ -31,8 +30,12 @@ type TUseOnChangeParams = {
   initialValue: InitialValue;
 };
 type TUseOnChange = (params: TUseOnChangeParams) => (change: Value) => void;
-type TUseValue = () => Value;
-type TUseNodeStateHandlersParams = Omit<TUseOnChangeParams, 'key'>;
+type TUseValueParam = {
+  initialValue: InitialValue;
+  key: string;
+};
+type TUseValue = (params: TUseValueParam) => Value;
+type TUseNodeStateHandlersParams = Omit<TUseOnChangeParams & TUseValueParam, 'key'>;
 type TUseNodeStateHandlers = (
   params: TUseNodeStateHandlersParams,
 ) => {
@@ -69,7 +72,10 @@ const useNodeStateHandlers: TUseNodeStateHandlers = ({
 }) => {
   const key = useUUID();
   return ({
-    value: useValue(),
+    value: useValue({
+      initialValue,
+      key,
+    }),
     onChange: useOnChange({
       onChange,
       key,
@@ -77,13 +83,4 @@ const useNodeStateHandlers: TUseNodeStateHandlers = ({
     }),
   });
 };
-
-const useIsNodeValueEmpty = (value?: Value) => {
-  const valueFromStore = useValue();
-  // eslint-disable-next-line no-unneeded-ternary
-  const value$ = value ? value : valueFromStore;
-  return value$ === undefined || isEmpty(value$);
-};
-
 export default useNodeStateHandlers;
-export { useIsNodeValueEmpty };

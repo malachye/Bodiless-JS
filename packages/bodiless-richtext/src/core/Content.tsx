@@ -21,14 +21,15 @@ import {
   ifToggledOn,
 } from '@bodiless/core';
 import { addProps } from '@bodiless/fclasses';
+import { Editor, Element } from 'slate';
 import {
   Editable,
   DefaultElement,
   DefaultLeaf,
+  useSlate,
 } from 'slate-react';
 import { flow } from 'lodash';
 import { useSlateContext } from './SlateEditorContext';
-import { useIsNodeValueEmpty } from '../useNodeStateHandlers';
 import {
   RenderLeafProps,
   RenderElementProps,
@@ -73,16 +74,28 @@ const renderElement = (props: RenderElementProps) => {
   return renderElement$(props);
 };
 
-const useIsEditableAndEmpty = () => useEditToggle() && useIsNodeValueEmpty();
+const useIsEmptyEditor = () => {
+  const editor = useSlate();
+  return Editor.isEmpty(editor, editor.children[0] as Element);
+};
+
+const useIsEditableAndEmpty = () => useEditToggle() && useIsEmptyEditor();
+
+/**
+ * hoc that can be applied to Editable based component
+ * adds styles to slate wrapper in order to solve a placeholder problem
+ * described in https://github.com/johnsonandjohnson/Bodiless-JS/issues/481
+ */
+const withEditableDefaultStyles = ifToggledOn(useIsEditableAndEmpty)(
+  addProps({
+    style: {
+      minWidth: '100px',
+    },
+  }),
+);
 
 const Content = flow(
-  ifToggledOn(useIsEditableAndEmpty)(
-    addProps({
-      style: {
-        minWidth: '100px',
-      },
-    }),
-  ),
+  withEditableDefaultStyles,
   ifEditable(
     addProps({
       readOnly: false,

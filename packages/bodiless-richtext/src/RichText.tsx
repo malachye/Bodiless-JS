@@ -20,7 +20,7 @@ import React, {
 } from 'react';
 import isEqual from 'react-fast-compare';
 import {
-  flowRight, pick, flow,
+  flowRight, pick, flow, isEmpty,
 } from 'lodash';
 import { createEditor, Editor } from 'slate';
 import type { Element } from 'slate';
@@ -90,7 +90,6 @@ import {
 import withDefaults from './withDefaults';
 import { withPreview } from './RichTextPreview';
 import withDataMigrator from './withDataMigrator';
-import { useIsNodeValueEmpty } from './useNodeStateHandlers';
 import type {
   RichTextProps,
   RichTextComponents,
@@ -247,11 +246,10 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
   );
 
   const initialValue$ = initialValue || [...defaultValue];
-  const isValueEmpty = useIsNodeValueEmpty(value);
-  const value$ = !isValueEmpty ? value : initialValue$;
+  const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
 
   return (
-    <Slate editor={editor.current} value={value$!} onChange={onChange}>
+    <Slate editor={editor.current} value={value$} onChange={onChange}>
       <uiContext.Provider value={finalUI}>
         <RichTextProvider
           {...rest}
