@@ -154,7 +154,6 @@ describe('Tout testing', function () {
 
   it('touts: 10 - editing Description', () => {
     cy.getEditor(descriptionXpath)
-      .click()
       .typeInSlate(editedPostfix)
       .should('have.text', description + editedPostfix);
   })
