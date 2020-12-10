@@ -48,6 +48,7 @@ describe('Tout testing', function () {
   it('touts: 1 - filling in Title', () => {
     cy.getEditor(titleXpath)
       .typeInSlate(title)
+    cy.getEditor(titleXpath)
       .should('have.text', title);
   })
 
@@ -55,6 +56,7 @@ describe('Tout testing', function () {
   it('touts: 2 - filling in Body', () => {
     cy.getEditor(descriptionXpath)
       .typeInSlate(description)
+    cy.getEditor(descriptionXpath)
       .should('have.text', description);
   })
 
@@ -62,6 +64,7 @@ describe('Tout testing', function () {
   it('touts: 3 - filling in CTA text', () => {
     cy.getEditor(ctaLabelXpath)
       .typeInSlate(ctaLabel)
+    cy.getEditor(ctaLabelXpath)
       .should('have.text', ctaLabel);
   })
 
@@ -148,6 +151,7 @@ describe('Tout testing', function () {
   it('touts: 9 - editing Title', () => {
     cy.getEditor(titleXpath)
       .typeInSlate(editedPostfix)
+    cy.getEditor(titleXpath)
       .should('have.text', title + editedPostfix);
   })
 
@@ -155,6 +159,7 @@ describe('Tout testing', function () {
   it('touts: 10 - editing Description', () => {
     cy.getEditor(descriptionXpath)
       .typeInSlate(editedPostfix)
+    cy.getEditor(descriptionXpath)
       .should('have.text', description + editedPostfix);
   })
 
@@ -162,6 +167,7 @@ describe('Tout testing', function () {
   it('touts: 11 - editing CTA label', () => {
     cy.getEditor(ctaLabelXpath)
       .typeInSlate(editedPostfix)
+    cy.getEditor(ctaLabelXpath)
       .should('have.text', ctaLabel + editedPostfix);
   })
 

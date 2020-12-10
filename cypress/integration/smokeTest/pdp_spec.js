@@ -65,6 +65,7 @@ describe('PDP (Product Details Page) smoke tests', function () {
   it('PDP: 2 - filling in Title', () => {
     cy.getEditor(titleXpath)
       .typeInSlate(title)
+    cy.getEditor(titleXpath)
       .should('have.text', title);
   })
 
@@ -72,6 +73,7 @@ describe('PDP (Product Details Page) smoke tests', function () {
   it('PDP: 3 - filling in Accordion item', () => {
     cy.getEditor(accordionOverviewBodyXpath)
       .typeInSlate(accordionBody)
+    cy.getEditor(accordionOverviewBodyXpath)
       .should('have.text', accordionBody);
     cy.xpath(accordionDirectionsExpandXpath)
       .click({ force: true });
