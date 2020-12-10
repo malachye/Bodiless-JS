@@ -14,35 +14,9 @@
 
 import { Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
-import { jsx } from 'slate-hyperscript';
 import { getDeserializers } from './RichTextItemGetters';
 import type { RichTextComponents } from './Type';
-
-
-export const deserialize = (element: HTMLElement, deserializers: Deserializer[]) => {
-  if (element.nodeType === 3) {
-    return element.textContent
-  } else if (element.nodeType !== 1) {
-    return null;
-  }
-
-  let parent = element;
-
-  const children = Array.from(parent.childNodes)
-    .map((element$: HTMLElement) => deserialize(element$, deserializers))
-    .flat()
-
-  if (element.nodeName === 'BODY') {
-    return jsx('fragment', {}, children)
-  }
-
-  const deserializer = deserializers.find(deserializer => deserializer.htmlElementMatcher(element));
-  if (deserializer) {
-    return jsx('element', deserializer.htmlElementToNodeMapper(element), children);
-  }
-  
-  return children
-}
+import { deserializeHtml } from './serializers';
 
 const withHtmlPaste = (components: RichTextComponents) => (editor: ReactEditor) => {
   const { insertData } = editor;
@@ -53,8 +27,7 @@ const withHtmlPaste = (components: RichTextComponents) => (editor: ReactEditor) 
     const html = data.getData('text/html')
 
     if (html) {
-      const parsed = new DOMParser().parseFromString(html, 'text/html');
-      const fragment = deserialize(parsed.body, deserializers);
+      const fragment = deserializeHtml(html, deserializers);
       Transforms.insertFragment(editor, fragment);
       return;
     }

@@ -12,21 +12,4 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import type { Deserializer } from '../../serializers';
-
-type Props = {
-  Component: React.ComponentType<any>,
-};
-
-const createDeserializerPlugin = ({
-  Component,
-}: Props) => {
-  const plugin: Deserializer = {
-    htmlElementMatcher: Component.htmlElementMatcher,
-    htmlElementToNodeMapper: Component.htmlElementToNodeMapper,
-  };
-  return plugin;
-};
-
-export { createDeserializerPlugin };
+export * from './htmlSerializer';
