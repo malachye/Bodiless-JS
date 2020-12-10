@@ -38,6 +38,7 @@ describe('Single Accordion smoke tests', function () {
   it('accordions: 1 - filling in Title in 1st accordion', () => {
     cy.getEditor(titleFirstXpath)
       .typeInSlate(title)
+    cy.getEditor(titleFirstXpath)
       .should('have.text', title)
   })
 
@@ -45,6 +46,7 @@ describe('Single Accordion smoke tests', function () {
   it('accordions: 2 - filling in Body in 1st accordion', () => {
     cy.getEditor(bodyFirstXpath)
       .typeInSlate(body)
+    cy.getEditor(bodyFirstXpath)
       .should('have.text', body)
   })
 
@@ -126,6 +128,7 @@ describe('Single Accordion smoke tests', function () {
   it('accordions: 9 - editing Title in the 1st accordion', () => {
     cy.getEditor(titleFirstXpath)
       .typeInSlate(editedPostfix)
+    cy.getEditor(titleFirstXpath)
       .should('have.text', title + editedPostfix)
   })
 
@@ -133,6 +136,7 @@ describe('Single Accordion smoke tests', function () {
   it('accordions: 10 - editing Body in the 1st accordion', () => {
     cy.getEditor(bodyFirstXpath)
       .typeInSlate(editedPostfix)
+    cy.getEditor(bodyFirstXpath)
       .should('have.text', body + editedPostfix)
   })
 
