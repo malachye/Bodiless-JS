@@ -19,26 +19,26 @@ type Props = {
 };
 
 
-type HTMLElementMapper = (element: HTMLElement) => boolean;
+type HTMLElementMatcher = (element: HTMLElement) => boolean;
 type HTMLElementToSlateNodeMapper = (element: HTMLElement) => object;
 
 type Deserializer = {
-  htmlElementMapper: HTMLElementMapper,
-  htmlElementToNode: HTMLElementToSlateNodeMapper,
+  htmlElementMatcher: HTMLElementMatcher,
+  htmlElementToNodeMapper: HTMLElementToSlateNodeMapper,
 };
 
 const createDeserializerPlugin = ({
   Component,
 }: Props) => {
   const plugin: Deserializer = {
-    htmlElementMapper: Component.htmlElement,
-    htmlElementToNode: Component.htmlElementToNode,
+    htmlElementMatcher: Component.htmlElementMatcher,
+    htmlElementToNodeMapper: Component.htmlElementToNodeMapper,
   };
   return plugin;
 };
 
 export { createDeserializerPlugin };
 export type {
-  HTMLElementMapper,
+  HTMLElementMatcher,
   HTMLElementToSlateNodeMapper,
 };

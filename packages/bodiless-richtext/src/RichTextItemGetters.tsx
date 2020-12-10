@@ -257,7 +257,7 @@ const getGlobalButtons = (components: RichTextComponents) => {
 const getDeserializers = (components: RichTextComponents) => {
   return Object.values(components)
     // eslint-disable-next-line no-prototype-builtins
-    .filter(Component => Component.hasOwnProperty('htmlElement'))
+    .filter(Component => Component.hasOwnProperty('htmlElementMatcher'))
     .map(Component => createDeserializerPlugin({ Component }));
 }
 

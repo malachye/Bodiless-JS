@@ -26,8 +26,6 @@ export const deserialize = (element: HTMLElement, deserializers: Deserializer[])
     return null;
   }
 
-  console.log(element.nodeName);
-
   let parent = element;
 
   const children = Array.from(parent.childNodes)
@@ -38,9 +36,9 @@ export const deserialize = (element: HTMLElement, deserializers: Deserializer[])
     return jsx('fragment', {}, children)
   }
 
-  const deserializer = deserializers.find(deserializer => deserializer.htmlElementMapper(element));
+  const deserializer = deserializers.find(deserializer => deserializer.htmlElementMatcher(element));
   if (deserializer) {
-    return jsx('element', deserializer.htmlElementToNode(element), children);
+    return jsx('element', deserializer.htmlElementToNodeMapper(element), children);
   }
   
   return children

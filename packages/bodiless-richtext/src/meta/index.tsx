@@ -22,12 +22,12 @@ import {
   asInline,
   withId,
   asVoid,
-  withHtmlElement,
+  withHtmlElementMatcher,
   withHtmlElementToSlateNodeMapper,
 } from '../RichTextItemSetters';
 
 const withLinkDeserializer = flow(
-  withHtmlElement((element: HTMLElement) => element.nodeName === 'A'),
+  withHtmlElementMatcher((element: HTMLElement) => element.nodeName === 'A'),
   withHtmlElementToSlateNodeMapper((element: HTMLElement) => ({
     type: 'Link',
     data: { slatenode: { href: element.getAttribute('href') } },
@@ -35,7 +35,7 @@ const withLinkDeserializer = flow(
 );
 
 const withHeader2Deserializer = flow(
-  withHtmlElement((element: HTMLElement) => element.nodeName === 'H2'),
+  withHtmlElementMatcher((element: HTMLElement) => element.nodeName === 'H2'),
   withHtmlElementToSlateNodeMapper(() => ({ type: 'H2' })),
 );
 

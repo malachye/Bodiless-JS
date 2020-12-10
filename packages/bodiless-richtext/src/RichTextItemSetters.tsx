@@ -18,7 +18,7 @@ import {
   RichTextItemType,
 } from './Type';
 import type {
-  HTMLElementMapper,
+  HTMLElementMatcher,
   HTMLElementToSlateNodeMapper,
 } from './plugin-factory/deserializer';
 
@@ -108,18 +108,19 @@ const withButton = (icon:string) => withHoverButton(icon);
 
 
 /**
- * maps RichTextItem into HtmlElement
+ * can be applied to a RichTextItem based component
+ * validates if component matches the given html element
  */
-const withHtmlElement = (mapper: HTMLElementMapper) => withMeta({
-  htmlElement: mapper,
+const withHtmlElementMatcher = (mapper: HTMLElementMatcher) => withMeta({
+  htmlElementMatcher: mapper,
 });
 
 
 /**
- * maps RichTextItem into HtmlElement
+ * maps RichTextItem into slate node
  */
 const withHtmlElementToSlateNodeMapper = (mapper: HTMLElementToSlateNodeMapper) => withMeta({
-  htmlElementToNode: mapper,
+  htmlElementToNodeMapper: mapper,
 });
 
 export {
@@ -134,6 +135,6 @@ export {
   withButton,
   withGlobalButton,
   withHoverButton,
-  withHtmlElement,
+  withHtmlElementMatcher,
   withHtmlElementToSlateNodeMapper,
 };
