@@ -25,18 +25,19 @@ import {
   withHtmlElementMatcher,
   withHtmlElementToSlateNodeMapper,
 } from '../RichTextItemSetters';
+import {
+  createLinkDeserializer,
+  createHeader2Deserializer,
+} from '../serializers';
 
 const withLinkDeserializer = flow(
-  withHtmlElementMatcher((element: HTMLElement) => element.nodeName === 'A'),
-  withHtmlElementToSlateNodeMapper((element: HTMLElement) => ({
-    type: 'Link',
-    data: { slatenode: { href: element.getAttribute('href') } },
-  })),
+  withHtmlElementMatcher(createLinkDeserializer().htmlElementMatcher),
+  withHtmlElementToSlateNodeMapper(createLinkDeserializer().htmlElementToNodeMapper),
 );
 
 const withHeader2Deserializer = flow(
-  withHtmlElementMatcher((element: HTMLElement) => element.nodeName === 'H2'),
-  withHtmlElementToSlateNodeMapper(() => ({ type: 'H2' })),
+  withHtmlElementMatcher(createHeader2Deserializer().htmlElementMatcher),
+  withHtmlElementToSlateNodeMapper(createHeader2Deserializer().htmlElementToNodeMapper),
 );
 
 export const withBoldMeta = flow(asMark, withKey('mod+b'), withButton('format_bold'));

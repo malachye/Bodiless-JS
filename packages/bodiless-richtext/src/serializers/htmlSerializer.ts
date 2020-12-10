@@ -58,9 +58,24 @@ const deserializeHtml = (
   return deserializeElement(parsed.body, deserializers);
 };
 
+const createLinkDeserializer = () => ({
+  htmlElementMatcher: (element: HTMLElement) => element.nodeName === 'A',
+  htmlElementToNodeMapper: (element: HTMLElement) => ({
+    type: 'Link',
+    data: { slatenode: { href: element.getAttribute('href') } },
+  }),
+});
+
+const createHeader2Deserializer = () => ({
+  htmlElementMatcher: (element: HTMLElement) => element.nodeName === 'H2',
+  htmlElementToNodeMapper: () => ({ type: 'H2' }),
+});
+
 export {
   deserializeElement,
   deserializeHtml,
+  createLinkDeserializer,
+  createHeader2Deserializer,
 };
 export type {
   HTMLElementMatcher,
