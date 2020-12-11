@@ -14,37 +14,25 @@
 
 import React, { ComponentType } from 'react';
 import { observer } from 'mobx-react-lite';
-import { ReactEditor } from 'slate-react';
 import useNodeStateHandlers from './useNodeStateHandlers';
-import type {
-  Value,
-  EditorOnChange,
-} from './Type';
+import type { RichTextProps } from './Type';
+import useInitialValue from './useInitialValue';
 
-type SlateEditorProps = {
-  editor: ReactEditor;
-  value: Value;
-  children: React.ReactNode;
-  onChange: EditorOnChange;
-};
-
-type NodeStateHandlers = Pick<SlateEditorProps, 'value' | 'onChange'>;
-
-export type Props = Pick<SlateEditorProps, 'value' | 'onChange'>;
-
-const withNodeStateHandlers = (Editor: ComponentType<SlateEditorProps>) => (
-  observer(({ value: originalValue, onChange: originalOnChange, ...rest }: SlateEditorProps) => {
-    const { value, onChange }: NodeStateHandlers = useNodeStateHandlers({
-      initialValue: originalValue,
+const withNodeStateHandlers = (Component: ComponentType<RichTextProps>) => (
+  observer(({ initialValue, onChange: originalOnChange, ...rest }: RichTextProps) => {
+    const initialValue$ = useInitialValue(initialValue);
+    const { value, onChange } = useNodeStateHandlers({
+      initialValue: initialValue$,
       onChange: originalOnChange,
     });
-    const finalEditorProps = {
+
+    const finalEditorProps: RichTextProps = {
       ...rest,
       value,
       onChange,
-    } as SlateEditorProps;
+    };
 
-    return <Editor {...finalEditorProps} />;
+    return <Component {...finalEditorProps} />;
   })
 );
 

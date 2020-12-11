@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import { useCallback } from 'react';
-import { toJS } from 'mobx';
+import { isObservable, toJS } from 'mobx';
 import isEqual from 'react-fast-compare';
+import { isEmpty } from 'lodash';
 import { useNode, useUUID } from '@bodiless/core';
 import {
   EditorOnChange,
@@ -23,13 +23,13 @@ import {
 
 type Data = Value;
 
-type InitialValue = Data;
+type InitialValue = Value;
 type TUseOnChangeParams = {
   onChange?: EditorOnChange;
   key: string;
   initialValue: InitialValue;
 };
-type TUseOnChange = (params: TUseOnChangeParams) => (change: Value) => void;
+type TUseOnChange = (params: TUseOnChangeParams) => EditorOnChange;
 type TUseValueParam = {
   initialValue: InitialValue;
   key: string;
@@ -45,19 +45,33 @@ type TUseNodeStateHandlers = (
 
 // Create the onChange prop.
 // @TODO Should be memoized with useCallback.
-const useOnChange: TUseOnChange = ({ onChange }) => {
+const useOnChange: TUseOnChange = ({ onChange, initialValue }) => {
   const { node } = useNode<Data>();
-  const nodeData = toJS(node.data);
+  let { data: nodeData } = node;
+  if (isObservable(nodeData)) {
+    nodeData = toJS(nodeData);
+  }
+  return value => {
+    // If Document has changed
+    const isDocumentChanged = !isEqual(nodeData, value);
 
-  return useCallback(value => {
+    // If the value is initial value
+    const isNewValueInitial = isEqual(initialValue, value);
+
+    // If New Value is Empty
+    const isNewValueEmpty = isNewValueInitial && !isEmpty(nodeData) && isDocumentChanged;
+
+    // If New Value Has Changes
+    const isNewValueChanged = !isNewValueInitial && (!nodeData || isDocumentChanged);
+
+    if (isNewValueEmpty || isNewValueChanged) {
+      node.setData(value);
+    }
+
     if (onChange) {
       onChange(value);
     }
-    // ToDo: ensure previous logic including saving initial value is not lost
-    if (!isEqual(value, nodeData)) {
-      node.setData(value);
-    }
-  }, []);
+  };
 };
 
 // Create the value prop (gets current editor value from state).
