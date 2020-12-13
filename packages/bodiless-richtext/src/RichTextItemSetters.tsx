@@ -17,10 +17,7 @@ import { mergeWith, isArray } from 'lodash';
 import {
   RichTextItemType,
 } from './Type';
-import type {
-  HTMLElementMatcher,
-  HTMLElementToSlateNodeMapper,
-} from './plugin-factory/deserializer';
+import type { Deserializer } from './serializers';
 
 function customizer(objValue:any, srcValue:any) {
   if (isArray(objValue)) {
@@ -106,21 +103,11 @@ const withHoverButton = (icon:string) => (
 */
 const withButton = (icon:string) => withHoverButton(icon);
 
-
 /**
- * can be applied to a RichTextItem based component
- * validates if component matches the given html element
+ * adds html deserializer to a given RichTextItem based component
  */
-const withHtmlElementMatcher = (mapper: HTMLElementMatcher) => withMeta({
-  htmlElementMatcher: mapper,
-});
-
-
-/**
- * maps RichTextItem into slate node
- */
-const withHtmlElementToSlateNodeMapper = (mapper: HTMLElementToSlateNodeMapper) => withMeta({
-  htmlElementToNodeMapper: mapper,
+const withHtmlDeserializer = (deserializer: Deserializer) => withMeta({
+  htmlDeserializer: deserializer,
 });
 
 export {
@@ -135,6 +122,5 @@ export {
   withButton,
   withGlobalButton,
   withHoverButton,
-  withHtmlElementMatcher,
-  withHtmlElementToSlateNodeMapper,
+  withHtmlDeserializer,
 };

@@ -22,11 +22,12 @@ type Props = {
 const createDeserializerPlugin = ({
   Component,
 }: Props) => {
+  const { htmlDeserializer } = Component;
   const plugin: Deserializer = {
-    htmlElementMatcher: Component.htmlElementMatcher,
+    htmlElementMatcher: htmlDeserializer.match,
     htmlElementToNodeMapper: Component.htmlElementToNodeMapper,
   };
   return plugin;
 };
 
-export { createDeserializerPlugin };
+export default createDeserializerPlugin;

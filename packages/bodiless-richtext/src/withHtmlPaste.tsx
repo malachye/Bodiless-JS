@@ -22,9 +22,9 @@ const withHtmlPaste = (components: RichTextComponents) => (editor: ReactEditor) 
   const { insertData } = editor;
 
   const deserializers = getDeserializers(components);
-  
+  // eslint-disable-next-line no-param-reassign
   editor.insertData = (data: DataTransfer) => {
-    const html = data.getData('text/html')
+    const html = data.getData('text/html');
 
     if (html) {
       const fragment = deserializeHtml(html, deserializers);
@@ -33,9 +33,9 @@ const withHtmlPaste = (components: RichTextComponents) => (editor: ReactEditor) 
     }
 
     insertData(data);
-  }
+  };
 
   return editor;
-}
+};
 
 export default withHtmlPaste;

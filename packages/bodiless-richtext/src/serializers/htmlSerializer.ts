@@ -14,25 +14,22 @@
 
 import { jsx } from 'slate-hyperscript';
 
-type HTMLElementMatcher = (element: HTMLElement) => boolean;
-type HTMLElementToSlateNodeMapper = (element: HTMLElement) => object;
+type HTMLElementMatch = (element: HTMLElement) => boolean;
+type HTMLElementMap = (element: HTMLElement) => object;
 
 type Deserializer = {
-  htmlElementMatcher: HTMLElementMatcher,
-  htmlElementToNodeMapper: HTMLElementToSlateNodeMapper,
+  match: HTMLElementMatch,
+  map: HTMLElementMap,
 };
 
 const deserializeElement = (
   element: HTMLElement,
   deserializers: Deserializer[],
 ) => {
-  if (element.nodeType === 3) {
-    return element.textContent
-  } else if (element.nodeType !== 1) {
-    return null;
-  }
+  if (element.nodeType === Node.TEXT_NODE) return element.textContent;
+  if (element.nodeType !== Node.ELEMENT_NODE) return null;
 
-  let parent = element;
+  const parent = element;
 
   const children = Array.from(parent.childNodes)
     .map((element$: HTMLElement) => deserializeElement(element$, deserializers))
@@ -42,9 +39,9 @@ const deserializeElement = (
     return jsx('fragment', {}, children);
   }
 
-  const deserializer = deserializers.find(deserializer => deserializer.htmlElementMatcher(element));
+  const deserializer = deserializers.find(deserializer$ => deserializer$.match(element));
   if (deserializer) {
-    return jsx('element', deserializer.htmlElementToNodeMapper(element), children);
+    return jsx('element', deserializer.map(element), children);
   }
 
   return children;
@@ -59,16 +56,16 @@ const deserializeHtml = (
 };
 
 const createLinkDeserializer = () => ({
-  htmlElementMatcher: (element: HTMLElement) => element.nodeName === 'A',
-  htmlElementToNodeMapper: (element: HTMLElement) => ({
+  match: (element: HTMLElement) => element.nodeName === 'A',
+  map: (element: HTMLElement) => ({
     type: 'Link',
     data: { slatenode: { href: element.getAttribute('href') } },
   }),
 });
 
 const createHeader2Deserializer = () => ({
-  htmlElementMatcher: (element: HTMLElement) => element.nodeName === 'H2',
-  htmlElementToNodeMapper: () => ({ type: 'H2' }),
+  match: (element: HTMLElement) => element.nodeName === 'H2',
+  map: () => ({ type: 'H2' }),
 });
 
 export {
@@ -78,7 +75,7 @@ export {
   createHeader2Deserializer,
 };
 export type {
-  HTMLElementMatcher,
-  HTMLElementToSlateNodeMapper,
+  HTMLElementMatch,
+  HTMLElementMap,
   Deserializer,
 };
