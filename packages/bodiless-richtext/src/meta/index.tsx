@@ -22,23 +22,15 @@ import {
   asInline,
   withId,
   asVoid,
-  withHtmlElementMatcher,
-  withHtmlElementToSlateNodeMapper,
+  withHtmlDeserializer,
 } from '../RichTextItemSetters';
 import {
   createLinkDeserializer,
   createHeader2Deserializer,
 } from '../serializers';
 
-const withLinkDeserializer = flow(
-  withHtmlElementMatcher(createLinkDeserializer().htmlElementMatcher),
-  withHtmlElementToSlateNodeMapper(createLinkDeserializer().htmlElementToNodeMapper),
-);
-
-const withHeader2Deserializer = flow(
-  withHtmlElementMatcher(createHeader2Deserializer().htmlElementMatcher),
-  withHtmlElementToSlateNodeMapper(createHeader2Deserializer().htmlElementToNodeMapper),
-);
+const withLinkDeserializer = withHtmlDeserializer(createLinkDeserializer());
+const withHeader2Deserializer = withHtmlDeserializer(createHeader2Deserializer());
 
 export const withBoldMeta = flow(asMark, withKey('mod+b'), withButton('format_bold'));
 export const withSuperScriptMeta = flow(asMark, withKey('mod+s'), withButton('format_size'));
