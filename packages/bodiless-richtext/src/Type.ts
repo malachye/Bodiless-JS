@@ -90,8 +90,8 @@ export type RichTextProps = {
   initialValue?: Value,
   nodeKey?: string,
   value?: Value;
-  onChange: (value: Value) => void;
-} & EditableProps;
+  onChange: EditorOnChange;
+} & Omit<EditableProps, 'value' | 'onChange'>;
 
 export type Plugin = {
   type: string,

@@ -73,7 +73,6 @@ import {
 import useKeyBoardShortcuts from './useKeyBoardShortcuts';
 import TextSelectorButton from './components/TextSelectorButton';
 import { uiContext, getUI, UI } from './RichTextContext';
-import defaultValue from './default-value';
 import {
   withBoldMeta,
   withSuperScriptMeta,
@@ -98,6 +97,7 @@ import type {
   EditorContext,
   Plugin,
 } from './Type';
+import useInitialValue from './useInitialValue';
 
 type WithSlateSchemaTypeProps = {
   schema: object,
@@ -249,7 +249,7 @@ const BasicRichText = React.memo(<P extends object>(props: P & RichTextProps) =>
     )(createEditor()) as ReactEditor,
   );
 
-  const initialValue$ = initialValue || [...defaultValue];
+  const initialValue$ = useInitialValue(initialValue);
   const value$ = value !== undefined && !isEmpty(value) ? value : initialValue$;
 
   return (
