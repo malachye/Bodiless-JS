@@ -12,6 +12,9 @@
  * limitations under the License.
  */
 
+const path = require('path');
+const { JSDOM } = require('jsdom');
+
 const {
   deserializeHtml,
   createLinkDeserializer,
@@ -19,24 +22,25 @@ const {
   createBoldDeserializer,
 } = require('@bodiless/richtext/lib/serializers');
 
-const inputHtml = `
- <div>
-   <p>some test text</p>
-   <a href="/testhref">TestHref</a>
-   <p>additional text</p>
-   <b>bold text</b>
- </div>
-`;
-
 const deserializers = [
   createLinkDeserializer(),
   createHeader2Deserializer(),
   createBoldDeserializer(),
 ];
 
-const { JSDOM } = require('jsdom');
 DOMParser = (new JSDOM()).window.DOMParser;
 const domParser = new DOMParser();
 
-const RTEData = deserializeHtml(inputHtml, deserializers, domParser);
-require('fs').writeFileSync('RTE.json', JSON.stringify(RTEData, null, 2));
+const richtextPlugin = {
+  onPageCreate: ({
+    document,
+    api,
+  }) => {
+    const body = document('body').html();
+    const richTextData = deserializeHtml(body, deserializers, domParser);
+    const rictTextFile = path.resolve(api.getPagePath(), 'rte.json');
+    api.writeJsonFileSync(rictTextFile, richTextData);
+  },
+};
+
+module.exports = richtextPlugin;
