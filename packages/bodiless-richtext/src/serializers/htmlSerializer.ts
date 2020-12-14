@@ -104,24 +104,6 @@ const createDeserializer = ({
   tagName,
 });
 
-const createLinkDeserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'A',
-    tagName: TagName.Element,
-  }),
-  map: (element: Element) => ({
-    type: 'Link',
-    data: { slatenode: { href: element.getAttribute('href') } },
-  }),
-});
-
-const createHeader2Deserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'H2',
-    tagName: TagName.Element,
-  }),
-});
-
 const createBoldDeserializer = () => ({
   ...createDeserializer({
     nodeName: 'B',
@@ -138,15 +120,59 @@ const createItalicDeserializer = () => ({
   map: () => ({ Italic: true }),
 });
 
+const createLinkDeserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'A',
+    tagName: TagName.Element,
+  }),
+  map: (element: Element) => ({
+    type: 'Link',
+    data: { slatenode: { href: element.getAttribute('href') } },
+  }),
+});
+
+const createStrikeDeserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'STRIKE',
+    tagName: TagName.Text,
+  }),
+  map: () => ({ StrikeThrough: true }),
+});
+
+const createHeader1Deserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'H1',
+    tagName: TagName.Element,
+  }),
+});
+
+const createHeader2Deserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'H2',
+    tagName: TagName.Element,
+  }),
+});
+
+const createHeader3Deserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'H3',
+    tagName: TagName.Element,
+  }),
+});
+
 export {
   deserializeElement,
   deserializeHtml,
-  createLinkDeserializer,
-  createHeader2Deserializer,
   createDeserializer,
   createBoldDeserializer,
   createItalicDeserializer,
+  createLinkDeserializer,
+  createStrikeDeserializer,
+  createHeader1Deserializer,
+  createHeader2Deserializer,
+  createHeader3Deserializer,
 };
+
 export type {
   HTMLElementMatch,
   HTMLElementMap,
