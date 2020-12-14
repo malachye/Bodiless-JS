@@ -16,17 +16,11 @@ const path = require('path');
 const { JSDOM } = require('jsdom');
 
 const {
+  createDefaultDeserializers,
   deserializeHtml,
-  createLinkDeserializer,
-  createHeader2Deserializer,
-  createBoldDeserializer,
 } = require('@bodiless/richtext/lib/serializers');
 
-const deserializers = [
-  createLinkDeserializer(),
-  createHeader2Deserializer(),
-  createBoldDeserializer(),
-];
+const deserializers = createDefaultDeserializers();
 
 DOMParser = (new JSDOM()).window.DOMParser;
 const domParser = new DOMParser();

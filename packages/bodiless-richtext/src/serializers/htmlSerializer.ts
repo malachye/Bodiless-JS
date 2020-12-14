@@ -36,6 +36,9 @@ type DeserializeElementParams = {
   deserializers: Deserializer[],
 };
 type DeserializeElement = (params: DeserializeElementParams) => SlateNode[];
+type Deserializers = {
+  [key: string]: Deserializer,
+};
 
 const NODE_TEXT_NODE = 3;
 const NODE_ELEMENT_NODE = 1;
@@ -79,14 +82,14 @@ const deserializeElement: DeserializeElement = ({
 
 const deserializeHtml = (
   html: string,
-  deserializers: Deserializer[],
+  deserializers: Deserializers,
   domParser?: DOMParser,
 ) => {
   const domParser$ = domParser || new DOMParser();
   const parsed = domParser$.parseFromString(html, 'text/html');
   return deserializeElement({
     element: parsed.body,
-    deserializers,
+    deserializers: Object.values(deserializers),
   });
 };
 
@@ -160,6 +163,16 @@ const createHeader3Deserializer = () => ({
   }),
 });
 
+const createDefaultDeserializers = () => ({
+  Bold: createBoldDeserializer(),
+  Italic: createItalicDeserializer(),
+  Link: createLinkDeserializer(),
+  StrikeThrough: createStrikeDeserializer(),
+  Header1: createHeader1Deserializer(),
+  Header2: createHeader2Deserializer(),
+  Header3: createHeader3Deserializer(),
+});
+
 export {
   deserializeElement,
   deserializeHtml,
@@ -171,6 +184,7 @@ export {
   createHeader1Deserializer,
   createHeader2Deserializer,
   createHeader3Deserializer,
+  createDefaultDeserializers,
 };
 
 export type {

@@ -253,10 +253,16 @@ const getGlobalButtons = (components: RichTextComponents) => {
   );
 };
 
-const getDeserializers = (components: RichTextComponents) => Object.values(components)
-  // eslint-disable-next-line no-prototype-builtins
-  .filter(Component => Component.hasOwnProperty('htmlDeserializer'))
-  .map(Component => Component.htmlDeserializer);
+const getDeserializers = (
+  components: RichTextComponents,
+) => Object.keys(components).reduce((prev: object, key: string) => {
+  const Component = components[key];
+  return {
+    ...prev,
+    // eslint-disable-next-line no-prototype-builtins
+    ...(Component.hasOwnProperty('htmlDeserializer') ? { [key]: Component.htmlDeserializer } : {}),
+  };
+}, {});
 
 export {
   getPlugins,
