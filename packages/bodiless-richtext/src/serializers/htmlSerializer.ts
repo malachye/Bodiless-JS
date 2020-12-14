@@ -63,14 +63,15 @@ const deserializeElement: DeserializeElement = ({
     deserializer$ => deserializer$.tagName === TagName.Element && deserializer$.match(element),
   );
   if (elementDeserializer) {
-    return jsx(TagName.Element, elementDeserializer.map(element), children);
+    const attrs = elementDeserializer.map(element);
+    return jsx(TagName.Element, attrs, children);
   }
 
   const textDeserializer = deserializers.find(
     deserializer$ => deserializer$.tagName === TagName.Text && deserializer$.match(element),
   );
   if (textDeserializer) {
-    return children.map(child => jsx(TagName.Element, textDeserializer.map(element), child));
+    return children.map(child => jsx(TagName.Text, textDeserializer.map(element), child));
   }
 
   return children;
@@ -129,6 +130,14 @@ const createBoldDeserializer = () => ({
   map: () => ({ Bold: true }),
 });
 
+const createItalicDeserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'I',
+    tagName: TagName.Text,
+  }),
+  map: () => ({ Italic: true }),
+});
+
 export {
   deserializeElement,
   deserializeHtml,
@@ -136,6 +145,7 @@ export {
   createHeader2Deserializer,
   createDeserializer,
   createBoldDeserializer,
+  createItalicDeserializer,
 };
 export type {
   HTMLElementMatch,

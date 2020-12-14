@@ -27,14 +27,18 @@ import {
 import {
   createLinkDeserializer,
   createHeader2Deserializer,
+  createBoldDeserializer,
+  createItalicDeserializer,
 } from '../serializers';
 
+const withBoldDeserializer = withHtmlDeserializer(createBoldDeserializer());
+const withItalicDeserializer = withHtmlDeserializer(createItalicDeserializer());
 const withLinkDeserializer = withHtmlDeserializer(createLinkDeserializer());
 const withHeader2Deserializer = withHtmlDeserializer(createHeader2Deserializer());
 
-export const withBoldMeta = flow(asMark, withKey('mod+b'), withButton('format_bold'));
+export const withBoldMeta = flow(withBoldDeserializer, asMark, withKey('mod+b'), withButton('format_bold'));
 export const withSuperScriptMeta = flow(asMark, withKey('mod+s'), withButton('format_size'));
-export const withItalicMeta = flow(asMark, withKey('mod+i'), withButton('format_italic'));
+export const withItalicMeta = flow(withItalicDeserializer, asMark, withKey('mod+i'), withButton('format_italic'));
 export const withLinkMeta = flow(withLinkDeserializer, asInline, withKey('mod+k'), withButton('link'));
 export const withStrikeThroughMeta = flow(asMark, withKey('mod+s'), withButton('format_strikethrough'));
 export const withUnderlineMeta = flow(asMark, withKey('mod+u'), withButton('format_underlined'));
