@@ -15,7 +15,7 @@
 import { jsx } from 'slate-hyperscript';
 import type { Node as SlateNode } from 'slate';
 
-type Element = HTMLElement | ChildNode;
+type Element = HTMLElement;
 
 type HTMLElementMatch = (element: Element) => boolean;
 type HTMLElementMap = (element: Element) => object;
@@ -23,7 +23,7 @@ enum TagName {
   Element = 'element',
   Text = 'text',
   Fragment = 'fragment',
-};
+}
 
 type Deserializer = {
   match: HTMLElementMatch,
@@ -35,19 +35,20 @@ type DeserializeElementParams = {
   element: Element,
   deserializers: Deserializer[],
 };
-type DeserializeElement = (params: DeserializeElementParams) => SlateNode[] | null;
+type DeserializeElement = (params: DeserializeElementParams) => SlateNode[];
 
+// @ts-ignore todo: resolve types
 const deserializeElement: DeserializeElement = ({
   element,
   deserializers,
 }) => {
   if (element.nodeType === Node.TEXT_NODE) return element.textContent;
-  if (element.nodeType !== Node.ELEMENT_NODE) return null;
+  if (element.nodeType !== Node.ELEMENT_NODE) return [];
 
   const children = Array.from(element.childNodes)
     .map((element$: ChildNode) => deserializeElement({
-      element: element$,
-      deserializers: deserializers,
+      element: element$ as Element,
+      deserializers,
     }))
     .flat();
 
@@ -56,14 +57,14 @@ const deserializeElement: DeserializeElement = ({
   }
 
   const elementDeserializer = deserializers.find(
-    deserializer$ => deserializer$.tagName === TagName.Element && deserializer$.match(element)
+    deserializer$ => deserializer$.tagName === TagName.Element && deserializer$.match(element),
   );
   if (elementDeserializer) {
     return jsx(TagName.Element, elementDeserializer.map(element), children);
   }
 
   const textDeserializer = deserializers.find(
-    deserializer$ => deserializer$.tagName === TagName.Text && deserializer$.match(element)
+    deserializer$ => deserializer$.tagName === TagName.Text && deserializer$.match(element),
   );
   if (textDeserializer) {
     return children.map(child => jsx(TagName.Element, textDeserializer.map(element), child));
@@ -85,7 +86,7 @@ const deserializeHtml = (
 
 type CreateDeserializerSettings = {
   nodeName: string,
-  tagName: string,
+  tagName: TagName,
 };
 
 const createDeserializer = ({
@@ -94,7 +95,7 @@ const createDeserializer = ({
 }: CreateDeserializerSettings) => ({
   match: (element: Element) => element.nodeName === nodeName,
   map: () => ({ type: nodeName }),
-  tagName: tagName,
+  tagName,
 });
 
 const createLinkDeserializer = () => ({
