@@ -31,5 +31,9 @@ const deserializers = [
   createHeader2Deserializer(),
 ];
 
-const RTEData = deserializeHtml(inputHtml, deserializers);
+const { JSDOM } = require('jsdom');
+DOMParser = (new JSDOM()).window.DOMParser;
+const domParser = new DOMParser();
+
+const RTEData = deserializeHtml(inputHtml, deserializers, domParser);
 require('fs').writeFileSync('RTE.json', JSON.stringify(RTEData, null, 2));

@@ -37,13 +37,16 @@ type DeserializeElementParams = {
 };
 type DeserializeElement = (params: DeserializeElementParams) => SlateNode[];
 
+const NODE_TEXT_NODE = 3;
+const NODE_ELEMENT_NODE = 1;
+
 // @ts-ignore todo: resolve types
 const deserializeElement: DeserializeElement = ({
   element,
   deserializers,
 }) => {
-  if (element.nodeType === Node.TEXT_NODE) return element.textContent;
-  if (element.nodeType !== Node.ELEMENT_NODE) return [];
+  if (element.nodeType === NODE_TEXT_NODE) return element.textContent;
+  if (element.nodeType !== NODE_ELEMENT_NODE) return [];
 
   const children = Array.from(element.childNodes)
     .map((element$: ChildNode) => deserializeElement({
@@ -76,8 +79,10 @@ const deserializeElement: DeserializeElement = ({
 const deserializeHtml = (
   html: string,
   deserializers: Deserializer[],
+  domParser?: DOMParser,
 ) => {
-  const parsed = new DOMParser().parseFromString(html, 'text/html');
+  const domParser$ = domParser || new DOMParser();
+  const parsed = domParser$.parseFromString(html, 'text/html');
   return deserializeElement({
     element: parsed.body,
     deserializers,
