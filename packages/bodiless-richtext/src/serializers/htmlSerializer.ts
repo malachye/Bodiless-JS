@@ -121,12 +121,21 @@ const createHeader2Deserializer = () => ({
   }),
 });
 
+const createBoldDeserializer = () => ({
+  ...createDeserializer({
+    nodeName: 'B',
+    tagName: TagName.Text,
+  }),
+  map: () => ({ Bold: true }),
+});
+
 export {
   deserializeElement,
   deserializeHtml,
   createLinkDeserializer,
   createHeader2Deserializer,
   createDeserializer,
+  createBoldDeserializer,
 };
 export type {
   HTMLElementMatch,

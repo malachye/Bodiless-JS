@@ -16,6 +16,7 @@ const {
   deserializeHtml,
   createLinkDeserializer,
   createHeader2Deserializer,
+  createBoldDeserializer,
 } = require('@bodiless/richtext/lib/serializers');
 
 const inputHtml = `
@@ -23,12 +24,14 @@ const inputHtml = `
    <p>some test text</p>
    <a href="/testhref">TestHref</a>
    <p>additional text</p>
+   <b>bold text</b>
  </div>
 `;
 
 const deserializers = [
   createLinkDeserializer(),
   createHeader2Deserializer(),
+  createBoldDeserializer(),
 ];
 
 const { JSDOM } = require('jsdom');
