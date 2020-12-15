@@ -13,3 +13,4 @@
  */
 
 export * from './htmlSerializer';
+export * from './defaultDeserializers';

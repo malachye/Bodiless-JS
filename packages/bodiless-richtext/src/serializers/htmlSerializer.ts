@@ -14,6 +14,7 @@
 
 import { jsx } from 'slate-hyperscript';
 import type { Node as SlateNode } from 'slate';
+import wrapTopLevelInlineNodesInParagraphs from './wrapTopLevelInlineNodesInParagraphs';
 
 type Element = HTMLElement;
 
@@ -87,10 +88,12 @@ const deserializeHtml = (
 ) => {
   const domParser$ = domParser || new DOMParser();
   const parsed = domParser$.parseFromString(html, 'text/html');
-  return deserializeElement({
+  const result = deserializeElement({
     element: parsed.body,
     deserializers: Object.values(deserializers),
   });
+  const result$ = wrapTopLevelInlineNodesInParagraphs(result);
+  return result$;
 };
 
 type CreateDeserializerSettings = {
@@ -107,84 +110,11 @@ const createDeserializer = ({
   tagName,
 });
 
-const createBoldDeserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'B',
-    tagName: TagName.Text,
-  }),
-  map: () => ({ Bold: true }),
-});
-
-const createItalicDeserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'I',
-    tagName: TagName.Text,
-  }),
-  map: () => ({ Italic: true }),
-});
-
-const createLinkDeserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'A',
-    tagName: TagName.Element,
-  }),
-  map: (element: Element) => ({
-    type: 'Link',
-    data: { slatenode: { href: element.getAttribute('href') } },
-  }),
-});
-
-const createStrikeDeserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'STRIKE',
-    tagName: TagName.Text,
-  }),
-  map: () => ({ StrikeThrough: true }),
-});
-
-const createHeader1Deserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'H1',
-    tagName: TagName.Element,
-  }),
-});
-
-const createHeader2Deserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'H2',
-    tagName: TagName.Element,
-  }),
-});
-
-const createHeader3Deserializer = () => ({
-  ...createDeserializer({
-    nodeName: 'H3',
-    tagName: TagName.Element,
-  }),
-});
-
-const createDefaultDeserializers = () => ({
-  Bold: createBoldDeserializer(),
-  Italic: createItalicDeserializer(),
-  Link: createLinkDeserializer(),
-  StrikeThrough: createStrikeDeserializer(),
-  Header1: createHeader1Deserializer(),
-  Header2: createHeader2Deserializer(),
-  Header3: createHeader3Deserializer(),
-});
-
 export {
   deserializeElement,
   deserializeHtml,
   createDeserializer,
-  createBoldDeserializer,
-  createItalicDeserializer,
-  createLinkDeserializer,
-  createStrikeDeserializer,
-  createHeader1Deserializer,
-  createHeader2Deserializer,
-  createHeader3Deserializer,
-  createDefaultDeserializers,
+  TagName,
 };
 
 export type {
