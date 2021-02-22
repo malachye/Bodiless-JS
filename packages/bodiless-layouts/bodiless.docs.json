@@ -1,9 +1,9 @@
 {
   "Components": {
-    "FlowContainer.md": "./README.md",
+    "FlowContainer.md": "./doc/FlowContainer.md",
     "assets": {
-      "ComponentLibraryNew.jpg": "./assets/ComponentLibraryNew.jpg",
-      "EmptyFlowcontainer.jpg": "./assets/EmptyFlowcontainer.jpg"
+      "ComponentLibraryNew.jpg": "./doc/assets/ComponentLibraryNew.jpg",
+      "EmptyFlowcontainer.jpg": "./doc/assets/EmptyFlowcontainer.jpg"
     }
   }
 }
